@@ -6,7 +6,6 @@
 #include "brave/ios/browser/brave_wallet/zcash_wallet_service_factory.h"
 
 #include "brave/components/brave_wallet/browser/pref_names.h"
-#include "brave/components/brave_wallet/browser/zcash/zcash_wallet_service.h"
 #include "brave/components/brave_wallet/common/common_utils.h"
 #include "brave/ios/browser/brave_wallet/keyring_service_factory.h"
 #include "components/keyed_service/core/keyed_service.h"

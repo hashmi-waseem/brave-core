@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "brave/components/brave_wallet/browser/zcash/zcash_wallet_service.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
 #include "components/keyed_service/ios/browser_state_keyed_service_factory.h"
 #include "mojo/public/cpp/bindings/pending_remote.h"

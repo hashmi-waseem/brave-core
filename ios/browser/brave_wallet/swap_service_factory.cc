@@ -25,6 +25,13 @@ mojo::PendingRemote<mojom::SwapService> SwapServiceFactory::GetForBrowserState(
 }
 
 // static
+SwapService* SwapServiceFactory::GetServiceForState(
+    ChromeBrowserState* browser_state) {
+  return static_cast<SwapService*>(
+      GetInstance()->GetServiceForBrowserState(browser_state, true));
+}
+
+// static
 SwapServiceFactory* SwapServiceFactory::GetInstance() {
   static base::NoDestructor<SwapServiceFactory> instance;
   return instance.get();

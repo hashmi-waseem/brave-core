@@ -157,37 +157,15 @@ public struct CryptoView: View {
                   }
                 )
               case .send:
-                SendTokenView(
-                  keyringStore: keyringStore,
-                  networkStore: store.networkStore,
-                  sendTokenStore: store.openSendTokenStore(destination.initialToken),
-                  completion: { success in
-                    if success {
-                      store.closeWalletActionStores()
-                      dismissAction()
-                    }
-                  },
-                  onDismiss: {
-                    store.closeWalletActionStores()
-                    dismissAction()
-                  }
-                )
+                NavigationView {
+                  WebUISendView()
+                }
+                .navigationViewStyle(.stack)
               case .swap:
-                SwapCryptoView(
-                  keyringStore: keyringStore,
-                  networkStore: store.networkStore,
-                  swapTokensStore: store.openSwapTokenStore(destination.initialToken),
-                  completion: { success in
-                    if success {
-                      store.closeWalletActionStores()
-                      dismissAction()
-                    }
-                  },
-                  onDismiss: {
-                    store.closeWalletActionStores()
-                    dismissAction()
-                  }
-                )
+                NavigationView {
+                  WebUISwapView()
+                }
+                .navigationViewStyle(.stack)
               case .deposit(let query):
                 DepositTokenView(
                   keyringStore: keyringStore,
@@ -347,19 +325,15 @@ private struct CryptoContainerView<DismissContent: ToolbarContent>: View {
               onDismiss: { cryptoStore.walletActionDestination = nil }
             )
           case .send:
-            SendTokenView(
-              keyringStore: keyringStore,
-              networkStore: cryptoStore.networkStore,
-              sendTokenStore: cryptoStore.openSendTokenStore(action.initialToken),
-              onDismiss: { cryptoStore.walletActionDestination = nil }
-            )
+            NavigationView {
+              WebUISendView()
+            }
+            .navigationViewStyle(.stack)
           case .swap:
-            SwapCryptoView(
-              keyringStore: keyringStore,
-              networkStore: cryptoStore.networkStore,
-              swapTokensStore: cryptoStore.openSwapTokenStore(action.initialToken),
-              onDismiss: { cryptoStore.walletActionDestination = nil }
-            )
+            NavigationView {
+              WebUISwapView()
+            }
+            .navigationViewStyle(.stack)
           case .deposit(let query):
             DepositTokenView(
               keyringStore: keyringStore,
@@ -408,5 +382,48 @@ private struct CryptoContainerView<DismissContent: ToolbarContent>: View {
         }
       )
     )
+  }
+}
+
+struct ChromeWebView: UIViewControllerRepresentable {
+
+  var title: String
+  let urlString: String
+
+  public func makeUIViewController(
+    context: UIViewControllerRepresentableContext<ChromeWebView>
+  ) -> ChromeWebViewController {
+    return ChromeWebViewController(privateBrowsing: false).then {
+      $0.title = title
+      $0.loadURL(urlString)
+      if #available(iOS 16.4, *) {
+        $0.webView.isInspectable = true
+      }
+    }
+  }
+
+  public func updateUIViewController(
+    _ uiViewController: ChromeWebViewController,
+    context: UIViewControllerRepresentableContext<ChromeWebView>
+  ) {
+    uiViewController.title = title
+  }
+}
+
+struct WebUISendView: View {
+
+  var body: some View {
+    ChromeWebView(title: Strings.Wallet.send, urlString: "brave://wallet/send")
+      .navigationTitle(Strings.Wallet.send)
+      .navigationBarTitleDisplayMode(.inline)
+  }
+}
+
+struct WebUISwapView: View {
+
+  var body: some View {
+    ChromeWebView(title: Strings.Wallet.swap, urlString: "brave://wallet/swap")
+      .navigationTitle(Strings.Wallet.swap)
+      .navigationBarTitleDisplayMode(.inline)
   }
 }
