@@ -5,7 +5,6 @@
 
 #include "brave/components/brave_rewards/core/test/rewards_engine_test.h"
 
-#include "brave/components/brave_rewards/common/mojom/rewards_engine.mojom-test-utils.h"
 #include "brave/components/brave_rewards/core/common/environment_config.h"
 
 namespace brave_rewards::internal {
@@ -19,7 +18,8 @@ RewardsEngineTest::RewardsEngineTest()
 RewardsEngineTest::~RewardsEngineTest() = default;
 
 void RewardsEngineTest::InitializeEngine() {
-  const auto result = mojom::RewardsEngineAsyncWaiter(&engine_).Initialize();
+  auto [result] = WaitFor<mojom::Result>(
+      [&](auto callback) { engine().Initialize(std::move(callback)); });
   DCHECK(result == mojom::Result::OK);
 }
 
