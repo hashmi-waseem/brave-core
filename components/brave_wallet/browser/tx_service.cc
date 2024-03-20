@@ -26,6 +26,7 @@
 #include "brave/components/brave_wallet/common/fil_address.h"
 #include "components/grit/brave_components_strings.h"
 #include "components/value_store/value_store_factory_impl.h"
+#include "services/network/public/cpp/shared_url_loader_factory.h"
 #include "ui/base/l10n/l10n_util.h"
 #include "url/origin.h"
 
@@ -75,13 +76,15 @@ size_t CalculatePendingTxCount(
 
 }  // namespace
 
-TxService::TxService(JsonRpcService* json_rpc_service,
-                     BitcoinWalletService* bitcoin_wallet_service,
-                     ZCashWalletService* zcash_wallet_service,
-                     KeyringService* keyring_service,
-                     PrefService* prefs,
-                     const base::FilePath& context_path,
-                     scoped_refptr<base::SequencedTaskRunner> ui_task_runner)
+TxService::TxService(
+    scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory,
+    JsonRpcService* json_rpc_service,
+    BitcoinWalletService* bitcoin_wallet_service,
+    ZCashWalletService* zcash_wallet_service,
+    KeyringService* keyring_service,
+    PrefService* prefs,
+    const base::FilePath& context_path,
+    scoped_refptr<base::SequencedTaskRunner> ui_task_runner)
     : prefs_(prefs), json_rpc_service_(json_rpc_service), weak_factory_(this) {
   store_factory_ = base::MakeRefCounted<value_store::ValueStoreFactoryImpl>(
       context_path.AppendASCII(kWalletBaseDirectory));
@@ -93,9 +96,10 @@ TxService::TxService(JsonRpcService* json_rpc_service,
   tx_manager_map_[mojom::CoinType::ETH] = std::unique_ptr<TxManager>(
       new EthTxManager(this, json_rpc_service, keyring_service, prefs,
                        delegate_.get(), account_resolver_delegate_.get()));
-  tx_manager_map_[mojom::CoinType::SOL] = std::unique_ptr<TxManager>(
-      new SolanaTxManager(this, json_rpc_service, keyring_service, prefs,
-                          delegate_.get(), account_resolver_delegate_.get()));
+  tx_manager_map_[mojom::CoinType::SOL] =
+      std::unique_ptr<TxManager>(new SolanaTxManager(
+          this, url_loader_factory, json_rpc_service, keyring_service, prefs,
+          delegate_.get(), account_resolver_delegate_.get()));
   tx_manager_map_[mojom::CoinType::FIL] = std::unique_ptr<TxManager>(
       new FilTxManager(this, json_rpc_service, keyring_service, prefs,
                        delegate_.get(), account_resolver_delegate_.get()));
@@ -212,12 +216,14 @@ void TxService::AddUnapprovedTransactionWithOrigin(
     mojom::AccountIdPtr from,
     const std::optional<url::Origin>& origin,
     AddUnapprovedTransactionCallback callback) {
+  LOG(ERROR) << "TxService::AddUnapprovedTransactionWithOrigin 0";
   if (!account_resolver_delegate_->ValidateAccountId(from)) {
     std::move(callback).Run(
         false, "",
         l10n_util::GetStringUTF8(IDS_WALLET_SEND_TRANSACTION_FROM_EMPTY));
     return;
   }
+  LOG(ERROR) << "TxService::AddUnapprovedTransactionWithOrigin 1";
 
   if (BlockchainRegistry::GetInstance()->IsOfacAddress(
           GetToAddressFromTxDataUnion(*tx_data_union))) {
@@ -226,6 +232,7 @@ void TxService::AddUnapprovedTransactionWithOrigin(
     return;
   }
 
+  LOG(ERROR) << "TxService::AddUnapprovedTransactionWithOrigin 2";
   auto coin_type = GetCoinTypeFromTxDataUnion(*tx_data_union);
   GetTxManager(coin_type)->AddUnapprovedTransaction(
       chain_id, std::move(tx_data_union), from, origin, std::move(callback));
@@ -474,6 +481,17 @@ void TxService::MakeTxDataFromBase64EncodedTransaction(
     MakeTxDataFromBase64EncodedTransactionCallback callback) {
   GetSolanaTxManager()->MakeTxDataFromBase64EncodedTransaction(
       encoded_transaction, std::move(tx_type), std::move(send_options),
+      std::move(callback));
+}
+
+void TxService::MakeBubbleGumProgramTransferTxData(
+    const std::string& chain_id,
+    const std::string& token_address,
+    const std::string& from_wallet_address,
+    const std::string& to_wallet_address,
+    MakeBubbleGumProgramTransferTxDataCallback callback) {
+  GetSolanaTxManager()->MakeBubbleGumProgramTransferTxData(
+      chain_id, token_address, from_wallet_address, to_wallet_address,
       std::move(callback));
 }
 

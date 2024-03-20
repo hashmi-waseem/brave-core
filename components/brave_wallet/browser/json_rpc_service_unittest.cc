@@ -1824,6 +1824,28 @@ class JsonRpcServiceUnitTest : public testing::Test {
     loop.Run();
   }
 
+  void TestFetchNftBalance(const std::string& wallet_address,
+                           const std::string& chain_id,
+                           const std::string& contract_address,
+                           const std::string& token_id,
+                           mojom::CoinType coin,
+                           uint64_t expected_balance,
+                           mojom::SolanaProviderError expected_error,
+                           const std::string& expected_error_message) {
+    base::RunLoop run_loop;
+    json_rpc_service_->GetNftBalance(
+        wallet_address, chain_id, contract_address, token_id, coin,
+        base::BindLambdaForTesting([&](uint64_t balance,
+                                       mojom::SolanaProviderError error,
+                                       const std::string& error_message) {
+          EXPECT_EQ(balance, expected_balance);
+          EXPECT_EQ(error_message, expected_error_message);
+          EXPECT_EQ(error, expected_error);
+          run_loop.Quit();
+        }));
+    run_loop.Run();
+  }
+
   template <class T>
   void WaitAndVerify(base::MockCallback<T>* callback) {
     task_environment_.RunUntilIdle();
@@ -7233,7 +7255,7 @@ TEST_F(JsonRpcServiceUnitTest, GetEthTokenInfo) {
       "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", mojom::kMainnetChainId,
       mojom::BlockchainToken::New(
           "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", "Basic Attention Token",
-          "", false, false, false, false, false, "BAT", 18, true, "",
+          "", false, false, false, false, false, false, "BAT", 18, true, "",
           "basic-attention-token", "0x1", mojom::CoinType::ETH),
       mojom::ProviderError::kSuccess, "");
 
@@ -7245,7 +7267,7 @@ TEST_F(JsonRpcServiceUnitTest, GetEthTokenInfo) {
       "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", mojom::kMainnetChainId,
       mojom::BlockchainToken::New(
           "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", "Basic Attention Token",
-          "", false, false, false, false, false, "", 18, true, "",
+          "", false, false, false, false, false, false, "", 18, true, "",
           "basic-attention-token", "0x1", mojom::CoinType::ETH),
       mojom::ProviderError::kSuccess, "");
 
@@ -7255,10 +7277,10 @@ TEST_F(JsonRpcServiceUnitTest, GetEthTokenInfo) {
       mojom::kMainnetChainId, bat_symbol_result, "", bat_decimals_result);
   TestGetEthTokenInfo(
       "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", mojom::kMainnetChainId,
-      mojom::BlockchainToken::New("0x0D8775F648430679A709E98d2b0Cb6250d2887EF",
-                                  "", "", false, false, false, false, false,
-                                  "BAT", 18, true, "", "basic-attention-token",
-                                  "0x1", mojom::CoinType::ETH),
+      mojom::BlockchainToken::New(
+          "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", "", "", false, false,
+          false, false, false, false, "BAT", 18, true, "",
+          "basic-attention-token", "0x1", mojom::CoinType::ETH),
       mojom::ProviderError::kSuccess, "");
 
   // Empty decimals response does not yield error
@@ -7269,7 +7291,7 @@ TEST_F(JsonRpcServiceUnitTest, GetEthTokenInfo) {
       "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", mojom::kMainnetChainId,
       mojom::BlockchainToken::New(
           "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", "Basic Attention Token",
-          "", false, false, false, false, false, "BAT", 0, true, "",
+          "", false, false, false, false, false, false, "BAT", 0, true, "",
           "basic-attention-token", "0x1", mojom::CoinType::ETH),
       mojom::ProviderError::kSuccess, "");
 
@@ -7281,7 +7303,7 @@ TEST_F(JsonRpcServiceUnitTest, GetEthTokenInfo) {
       "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", mojom::kMainnetChainId,
       mojom::BlockchainToken::New(
           "0x0D8775F648430679A709E98d2b0Cb6250d2887EF", "Basic Attention Token",
-          "", false, false, false, false, false, "BAT", 0, true, "",
+          "", false, false, false, false, false, false, "BAT", 0, true, "",
           "basic-attention-token", "0x1", mojom::CoinType::ETH),
       mojom::ProviderError::kSuccess, "");
 }
@@ -7493,6 +7515,84 @@ TEST_F(JsonRpcServiceUnitTest, AnkrGetAccountBalances) {
             run_loop_4.Quit();
           }));
   run_loop_4.Run();
+}
+
+TEST_F(JsonRpcServiceUnitTest, GetNftBalance) {
+  // Timeout results in null reponse
+  SetHTTPRequestTimeoutInterceptor();
+  TestFetchNftBalance(
+      "D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX", mojom::kSolanaMainnet,
+      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "", mojom::CoinType::SOL,
+      0, mojom::SolanaProviderError::kInternalError,
+      l10n_util::GetStringUTF8(IDS_WALLET_INTERNAL_ERROR));
+
+  // Invalid json  results in null reponse
+  std::string json = R"({)";
+  SetInterceptor(json);
+  TestFetchNftBalance(
+      "D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX", mojom::kSolanaMainnet,
+      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "", mojom::CoinType::SOL,
+      0, mojom::SolanaProviderError::kInternalError,
+      l10n_util::GetStringUTF8(IDS_WALLET_INTERNAL_ERROR));
+
+  // Valid json
+  json = R"({
+    "nft_id": "solana.BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "chain": "solana",
+    "contract_address": "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "token_id": null,
+    "name": "Metaplex AirDrop",
+    "description": "$MPLX Tokens were allocated based on previous wallet activity that had interacted with solana ecosystem.",
+    "image_url": "https://cdn.simplehash.com/assets/e009ff610f6b3ec204543bcb80862454533dc103917bb3cf454f0d432097b879.png",
+    "owners": [
+      {
+        "owner_address": "D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+        "quantity": 68,
+        "quantity_string": "68",
+        "first_acquired_date": "2022-11-10T22:57:48",
+        "last_acquired_date": "2022-11-10T22:57:48"
+      },
+      {
+        "owner_address": "53hkAsgKmeA6gopsSHt3tfn6Jcr12s4UforsexfhG637",
+        "quantity": 13,
+        "quantity_string": "13",
+        "first_acquired_date": "2022-09-28T04:05:19",
+        "last_acquired_date": "2022-09-30T08:36:04"
+      },
+      {
+        "owner_address": "9PedHCCYwJxv2m9Ls1G2jhzagrhMYbENT6D1vw9sRywq",
+        "quantity": 9,
+        "quantity_string": "9",
+        "first_acquired_date": "2022-09-27T22:09:14",
+        "last_acquired_date": "2022-09-29T21:34:44"
+      },
+      {
+        "owner_address": "skipped",
+        "quantity_string": "9",
+        "first_acquired_date": "2022-09-27T22:09:14",
+        "last_acquired_date": "2022-09-29T21:34:44"
+      }
+    ]
+  })";
+  SetInterceptor(json);
+
+  // If the wallet address is not an owner, a 0 balance is returned
+  TestFetchNftBalance("missing", mojom::kSolanaMainnet,
+                      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "",
+                      mojom::CoinType::SOL, 0,
+                      mojom::SolanaProviderError::kSuccess, "");
+
+  // Correct balance is returned.
+  TestFetchNftBalance(
+      "D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX", mojom::kSolanaMainnet,
+      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "", mojom::CoinType::SOL,
+      68, mojom::SolanaProviderError::kSuccess, "");
+
+  // Correct balance is returned.
+  TestFetchNftBalance(
+      "9PedHCCYwJxv2m9Ls1G2jhzagrhMYbENT6D1vw9sRywq", mojom::kSolanaMainnet,
+      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "", mojom::CoinType::SOL,
+      9, mojom::SolanaProviderError::kSuccess, "");
 }
 
 }  // namespace brave_wallet

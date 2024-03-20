@@ -21,6 +21,7 @@
 #include "base/memory/weak_ptr.h"
 #include "brave/components/api_request_helper/api_request_helper.h"
 #include "brave/components/brave_wallet/browser/ens_resolver_task.h"
+#include "brave/components/brave_wallet/browser/simple_hash_client.h"
 #include "brave/components/brave_wallet/browser/sns_resolver_task.h"
 #include "brave/components/brave_wallet/browser/solana_transaction.h"
 #include "brave/components/brave_wallet/browser/unstoppable_domains_multichain_calls.h"
@@ -463,6 +464,14 @@ class JsonRpcService : public KeyedService, public mojom::JsonRpcService {
   void GetSolTokenMetadata(const std::string& chain_id,
                            const std::string& token_mint_address,
                            GetSolTokenMetadataCallback callback) override;
+
+  void GetNftBalance(const std::string& wallet_address,
+                     const std::string& chain_id,
+                     const std::string& contract_address,
+                     const std::string& token_id,
+                     mojom::CoinType coin,
+                     GetNftBalanceCallback callback) override;
+
   void IsSolanaBlockhashValid(const std::string& chain_id,
                               const std::string& blockhash,
                               const std::optional<std::string>& commitment,
@@ -681,6 +690,9 @@ class JsonRpcService : public KeyedService, public mojom::JsonRpcService {
                                     mojom::ProviderError error,
                                     const std::string& error_message);
 
+  void OnGetNftBalance(GetNftBalanceCallback callback,
+                       std::optional<uint64_t> balance);
+
   // Solana
   void OnGetSolanaBalance(GetSolanaBalanceCallback callback,
                           APIRequestResult api_request_result);
@@ -740,6 +752,7 @@ class JsonRpcService : public KeyedService, public mojom::JsonRpcService {
   const raw_ptr<PrefService> prefs_ = nullptr;
   const raw_ptr<PrefService> local_state_prefs_ = nullptr;
   std::unique_ptr<NftMetadataFetcher> nft_metadata_fetcher_;
+  std::unique_ptr<SimpleHashClient> simple_hash_client_;
   base::WeakPtrFactory<JsonRpcService> weak_ptr_factory_;
 };
 

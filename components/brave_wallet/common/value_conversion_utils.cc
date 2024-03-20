@@ -360,6 +360,13 @@ mojom::BlockchainTokenPtr ValueToBlockchainToken(
     token_ptr->coingecko_id = *coingecko_id;
   }
 
+  std::optional<bool> is_compressed = value.FindBool("is_compressed");
+  if (!is_compressed) {
+    token_ptr->is_compressed = false;
+  } else {
+    token_ptr->is_compressed = is_compressed.value();
+  }
+
   return token_ptr;
 }
 
@@ -382,6 +389,8 @@ base::Value::Dict BlockchainTokenToValue(
   value.Set("coingecko_id", token->coingecko_id);
   value.Set("coin", static_cast<int>(token->coin));
   value.Set("chain_id", token->chain_id);
+  value.Set("is_compressed", token->is_compressed);
+  LOG(ERROR) << "setting is compressed to " << token->is_compressed;
   return value;
 }
 

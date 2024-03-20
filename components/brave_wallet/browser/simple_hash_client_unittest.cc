@@ -108,6 +108,27 @@ class SimpleHashClientUnitTest : public testing::Test {
     run_loop.Run();
   }
 
+  void TestFetchNftBalance(const std::string& wallet_address,
+                           const std::string& chain_id,
+                           const std::string& contract_address,
+                           const std::string& token_id,
+                           mojom::CoinType coin,
+                           std::optional<uint64_t> expected_balance) {
+    base::RunLoop run_loop;
+    simple_hash_client_->GetNftBalance(
+        wallet_address, chain_id, contract_address, token_id, coin,
+        base::BindLambdaForTesting([&](std::optional<uint64_t> balance) {
+          if (!expected_balance) {
+            EXPECT_FALSE(balance);
+          } else {
+            ASSERT_TRUE(balance);
+            EXPECT_EQ(*balance, *expected_balance);
+          }
+          run_loop.Quit();
+        }));
+    run_loop.Run();
+  }
+
   network::TestURLLoaderFactory url_loader_factory_;
   scoped_refptr<network::SharedURLLoaderFactory> shared_url_loader_factory_;
   content::BrowserTaskEnvironment task_environment_;
@@ -303,6 +324,7 @@ TEST_F(SimpleHashClientUnitTest, ParseNFTsFromSimpleHash) {
   EXPECT_EQ(result->second[0]->token_id, "0x1");
   EXPECT_EQ(result->second[0]->chain_id, mojom::kPolygonMainnetChainId);
   EXPECT_EQ(result->second[0]->coin, mojom::CoinType::ETH);
+  EXPECT_EQ(result->second[0]->is_compressed, false);
 
   // Valid, 2 ETH NFTs
   json = R"({
@@ -362,6 +384,7 @@ TEST_F(SimpleHashClientUnitTest, ParseNFTsFromSimpleHash) {
   EXPECT_EQ(result->second[0]->token_id, "0x1");
   EXPECT_EQ(result->second[0]->chain_id, mojom::kPolygonMainnetChainId);
   EXPECT_EQ(result->second[0]->coin, mojom::CoinType::ETH);
+  EXPECT_EQ(result->second[0]->is_compressed, false);
 
   EXPECT_EQ(result->second[1]->contract_address,
             "0x2222222222222222222222222222222222222222");
@@ -379,6 +402,7 @@ TEST_F(SimpleHashClientUnitTest, ParseNFTsFromSimpleHash) {
   EXPECT_EQ(result->second[1]->token_id, "0x2");
   EXPECT_EQ(result->second[1]->chain_id, mojom::kMainnetChainId);
   EXPECT_EQ(result->second[1]->coin, mojom::CoinType::ETH);
+  EXPECT_EQ(result->second[1]->is_compressed, false);
 
   // 6 ETH nfts, but only 1 has all necessary keys yields 1 NFT
   //
@@ -519,6 +543,7 @@ TEST_F(SimpleHashClientUnitTest, ParseNFTsFromSimpleHash) {
   EXPECT_EQ(result->second[0]->coingecko_id, "");
   EXPECT_EQ(result->second[0]->chain_id, mojom::kSolanaMainnet);
   EXPECT_EQ(result->second[0]->coin, mojom::CoinType::SOL);
+  EXPECT_EQ(result->second[0]->is_compressed, false);
 
   // 1 SOL NFT (NonFungibleEdition)
   json = R"({
@@ -705,6 +730,244 @@ TEST_F(SimpleHashClientUnitTest, ParseNFTsFromSimpleHash) {
   EXPECT_EQ(result->second[1]->contract_address,
             "BHWBJ7XtBqJJbg9SrAUH4moeF8VpJo3WXyDh6vc1qqLG");
   EXPECT_FALSE(result->second[1]->is_spam);
+
+  // Compressed SOL NFT
+  json = R"({
+    "next_cursor": null,
+    "next": null,
+    "previous": null,
+    "nfts": [
+      {
+        "chain": "solana",
+        "contract_address": "6FoSmkL9Z6yoFtTrhsC8Zq4w4PDpsMfGRXSgiR3ri66n",
+        "token_id": null,
+        "name": "2.0 Jupiter AirDrop",
+        "description": "Visit the domain shown in the picture and claim your exclusive voucher jupdrop66.com",
+        "image_url": "https://cdn.simplehash.com/assets/663f4be09316c554b420bf869baa82f3081d44abf95f6687f58a4dd99fe8e23e.png",
+        "contract": {
+          "type": "NonFungible",
+          "name": "🎁2.0 Jupiter AirDrop",
+          "symbol": "Jup2.0"
+        },
+        "collection": {
+          "spam_score": 100
+        },
+        "last_sale": null,
+        "first_created": {
+          "minted_to": "FBG2vwk2tGKHbEWHSxf7rJGDuZ2eHaaNQ8u6c7xGt9Yv",
+          "quantity": 1,
+          "quantity_string": "1",
+          "timestamp": "2024-02-18T16:34:36",
+          "block_number": 248974309,
+          "transaction": "4n1vvPwnMP7Hrjqek3yqXcVVd4LPtyvum5278x95QkWkrGUxm8SVhH3idtLHeDZndoGg4cpWNq1AmTGTQXhWcaKD",
+          "transaction_initiator": "6G9UfJJEgQpNB7rDWoVRHcF93nAShcFu7EwedYkua3PH"
+        },
+        "rarity": {
+          "rank": 2343,
+          "score": 1.053,
+          "unique_attributes": 0
+        },
+        "royalty": [
+          {
+            "source": "metaplex",
+            "total_creator_fee_basis_points": 0,
+            "recipients": []
+          }
+        ],
+        "extra_metadata": {
+          "compression": {
+            "compressed": true,
+            "merkle_tree": "7eFJyb6UF4hQS7nSQaiy8Xpdq6V7Q1ZRjD3Lze11DZTd",
+            "leaf_index": 1316261
+          },
+          "token_program": "BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY"
+        }
+      }
+    ]
+  })";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  result = simple_hash_client_->ParseNFTsFromSimpleHash(
+      *json_value, mojom::CoinType::SOL, false, false);
+  ASSERT_TRUE(result);
+  EXPECT_EQ(result->second.size(), 1u);
+  EXPECT_EQ(result->second[0]->contract_address,
+            "6FoSmkL9Z6yoFtTrhsC8Zq4w4PDpsMfGRXSgiR3ri66n");
+  EXPECT_EQ(result->second[0]->is_compressed, true);
+}
+
+TEST_F(SimpleHashClientUnitTest, ParseSolCompressedNftProofData) {
+  std::string json;
+  std::optional<base::Value> json_value;
+
+  // Valid JSON data
+  json = R"({
+  "root": "5bR96ZfMpkDCBQBFvNwdMRizNTp5ZcNEAYq6J3D7mXMR",
+  "proof": [
+    "ANs5srcJ9fSZpbGmJGXy8M6G3NeNABzK8SshSb9JCwAz",
+    "7Kd9DCCFMFrezFznsWAqwA6jtmRRVVHjon5oKVJFffDf",
+    "BvSxmwtVL5bx41gnKhpx2hTdYnXdJ1XfetwwHxQPC8Mn",
+    "GEtJJVAYjv5mknVVVSjvLmy7BJeQWSdKhbTWdfqLHhpK",
+    "VbqjLNCgxCE6Mm9WMTtBxNmthVHqs557AXRRTMhTr4t",
+    "3obQ6KPFsC9QfM6g3ZtYC2RbHPfUKn4iBnDecfZoBhbG",
+    "DTLQKdFQj8ywDktN1BqR6oe48XGyoSGzAzQgX9QWfnBk",
+    "6zZokt6UsXMNEcXPYn3T2LfSaZN6DmZoDwqc3rM16ohu",
+    "4aPfGxhmkgrh6Lz82dsi4mdcNC3vZyE1AXiYbJQta4Gw",
+    "2AG8n5BwPATab9wWJ2g9XuqXS4xBiQvLVHhn1zX715Ub",
+    "JAN9FwHcwqi79Um4MxzrBkTPYEtLHFkUFP8FbnPAFCzc",
+    "Ha6247eWxRgGyFCN2NfLbkKMEpLwU1zmkx1QwwRxQ5Ne",
+    "6Rt4B2UPizK2gdvmsd8KahazFtc8S5johvGZCUXmHGyV",
+    "25wz52GHDo7vX9QSYbUwMd1gi82MUm8sdmAj5jFX8MAH",
+    "5W1NH3cKSBdrKeXbd2t8QdwdTU4qTFpSrr1FZyVgHeS8",
+    "2XTZ9pTcLXFxGw1hBGrzXMGJrMnvo47sGyLUQwF88SUb",
+    "Sia7ffUkzN8xqRHLX4xRdFXzUbVv7LtzRzKDBz8hgDK",
+    "4XjrBbzyUWXxXECf173MukGdjHDWQMJ7rs2ojny445my",
+    "DqbTjtfiRPHZf2wwmMJ38acyJNTHeiYBsrySSjbMYNiE",
+    "2msvGdBzYX2sHifvvr8kJ6YYYvCK2gjjbRZH2tAQ93d5",
+    "2XvcBPNUGQSWmyjqYYk9WDFsKLF9oMrnAYxKBJGsPXtw",
+    "HSURhkbUwDFSy464A5vNPuPaqe1vWb51YeAf689oprx8",
+    "76hjrsKb9iKgHhiY2Np3NYPZaEwnzGcsr6mwyzj4Grj8",
+    "6FMzwZu6MxNiBkrE9e6w5fwh925YJEJoRNyQQ9JnrJs3"
+  ],
+  "merkle_tree": "7eFJyb6UF4hQS7nSQaiy8Xpdq6V7Q1ZRjD3Lze11DZTd",
+  "data_hash": "4yfgTevXs3x93pS8tfaqh92y22gAqcRS6Ptt8s6uR3u2",
+  "creator_hash": "BSao3oE3zsHmciedhR95HTFyASwrMrwPkcA3xZH9iyzL",
+  "leaf_index": 1316261,
+  "owner": "FBG2vwk2tGKHbEWHSxf7rJGDuZ2eHaaNQ8u6c7xGt9Yv",
+  "delegate": "6G9UfJJEgQpNB7rDWoVRHcF93nAShcFu7EwedYkua3PH",
+  "canopy_depth": 0
+})";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  auto result =
+      simple_hash_client_->ParseSolCompressedNftProofData(*json_value);
+  ASSERT_TRUE(result);
+
+  EXPECT_EQ(result->root, "5bR96ZfMpkDCBQBFvNwdMRizNTp5ZcNEAYq6J3D7mXMR");
+  EXPECT_EQ(result->data_hash, "4yfgTevXs3x93pS8tfaqh92y22gAqcRS6Ptt8s6uR3u2");
+  EXPECT_EQ(result->creator_hash,
+            "BSao3oE3zsHmciedhR95HTFyASwrMrwPkcA3xZH9iyzL");
+  EXPECT_EQ(result->leaf_index, 1316261u);
+  EXPECT_EQ(result->owner, "FBG2vwk2tGKHbEWHSxf7rJGDuZ2eHaaNQ8u6c7xGt9Yv");
+  ASSERT_EQ(result->proof.size(), 24u);
+  EXPECT_EQ(result->proof.front(),
+            "ANs5srcJ9fSZpbGmJGXy8M6G3NeNABzK8SshSb9JCwAz");
+  EXPECT_EQ(result->proof.back(),
+            "6FMzwZu6MxNiBkrE9e6w5fwh925YJEJoRNyQQ9JnrJs3");
+  EXPECT_EQ(result->merkle_tree,
+            "7eFJyb6UF4hQS7nSQaiy8Xpdq6V7Q1ZRjD3Lze11DZTd");
+  EXPECT_EQ(result->canopy_depth, 0u);  // Correct canopy depth
+
+  // JSON with missing required fields yields std::nullopt
+  json = R"({
+    "data_hash": "79vyLbMksGJdhR8MBRCi73QhxtUxhSdLPQCCkwNpv5MH"
+  })";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  result = simple_hash_client_->ParseSolCompressedNftProofData(*json_value);
+  ASSERT_FALSE(result);
+
+  // Non-dictionary JSON response yields std::nullopt
+  json = R"([])";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  result = simple_hash_client_->ParseSolCompressedNftProofData(*json_value);
+  ASSERT_FALSE(result);
+
+  // Incorrect data type for `canopy_depth` yields std::nullopt
+  json = R"({
+    "data_hash": "79vyLbMksGJdhR8MBRCi73QhxtUxhSdLPQCCkwNpv5MH",
+    "creator_hash": "55QLBBtrSxGk3VbBwG3RZKSz4cWHxRkTK1BZnDDKXfNv",
+    "proof": [
+      "6DQNDJuUQjetFLwr9jejENdkMsJEoJz1FFoNehdQYiE4",
+      "5GjkHXXejqyJcX1jMnG4sPRf55TuaFzPYAgvwh86buXd"
+    ],
+    "merkle_tree": "D7kub8uwwptGUyiuRFpHUBPmYc446ocpoWDoopcDhW42",
+    "canopy_depth": "twelve"
+  })";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  result = simple_hash_client_->ParseSolCompressedNftProofData(*json_value);
+  ASSERT_FALSE(result);
+}
+
+TEST_F(SimpleHashClientUnitTest, ParseNftOwners) {
+  std::string json;
+  std::optional<base::Value> json_value;
+
+  // Invalid JSON, owners dict missing
+  json = R"({
+    "nft_id": "solana.BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "chain": "solana",
+    "contract_address": "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "token_id": null,
+    "name": "Metaplex AirDrop",
+    "description": "$MPLX Tokens were allocated based on previous wallet activity that had interacted with solana ecosystem.",
+    "image_url": "https://cdn.simplehash.com/assets/e009ff610f6b3ec204543bcb80862454533dc103917bb3cf454f0d432097b879.png"
+  })";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  auto result = simple_hash_client_->ParseNftOwners(*json_value);
+  ASSERT_FALSE(result);
+
+  // Valid JSON data
+  json = R"({
+    "nft_id": "solana.BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "chain": "solana",
+    "contract_address": "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "token_id": null,
+    "name": "Metaplex AirDrop",
+    "description": "$MPLX Tokens were allocated based on previous wallet activity that had interacted with solana ecosystem.",
+    "image_url": "https://cdn.simplehash.com/assets/e009ff610f6b3ec204543bcb80862454533dc103917bb3cf454f0d432097b879.png",
+    "owners": [
+      {
+        "owner_address": "D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+        "quantity": 68,
+        "quantity_string": "68",
+        "first_acquired_date": "2022-11-10T22:57:48",
+        "last_acquired_date": "2022-11-10T22:57:48"
+      },
+      {
+        "owner_address": "53hkAsgKmeA6gopsSHt3tfn6Jcr12s4UforsexfhG637",
+        "quantity": 13,
+        "quantity_string": "13",
+        "first_acquired_date": "2022-09-28T04:05:19",
+        "last_acquired_date": "2022-09-30T08:36:04"
+      },
+      {
+        "owner_address": "9PedHCCYwJxv2m9Ls1G2jhzagrhMYbENT6D1vw9sRywq",
+        "quantity": 9,
+        "quantity_string": "9",
+        "first_acquired_date": "2022-09-27T22:09:14",
+        "last_acquired_date": "2022-09-29T21:34:44"
+      },
+      {
+        "owner_address": "skipped",
+        "quantity_string": "9",
+        "first_acquired_date": "2022-09-27T22:09:14",
+        "last_acquired_date": "2022-09-29T21:34:44"
+      }
+    ]
+  })";
+  json_value = base::JSONReader::Read(json);
+  ASSERT_TRUE(json_value);
+  result = simple_hash_client_->ParseNftOwners(*json_value);
+  ASSERT_TRUE(result);
+
+  ASSERT_EQ(3u,
+            result->size());  // Owner with missing quantity is not included.
+
+  EXPECT_EQ("D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+            result.value()[0].first);
+  EXPECT_EQ(68u, result.value()[0].second);
+
+  EXPECT_EQ("53hkAsgKmeA6gopsSHt3tfn6Jcr12s4UforsexfhG637",
+            result.value()[1].first);
+  EXPECT_EQ(13u, result.value()[1].second);
+
+  EXPECT_EQ("9PedHCCYwJxv2m9Ls1G2jhzagrhMYbENT6D1vw9sRywq",
+            result.value()[2].first);
+  EXPECT_EQ(9u, result.value()[2].second);
 }
 
 TEST_F(SimpleHashClientUnitTest, FetchAllNFTsFromSimpleHash) {
@@ -1001,6 +1264,90 @@ TEST_F(SimpleHashClientUnitTest, FetchNFTsFromSimpleHash) {
                               {mojom::kMainnetChainId}, mojom::CoinType::ETH,
                               std::nullopt, false, true,
                               expected_nfts_only_spam, std::nullopt);
+}
+
+TEST_F(SimpleHashClientUnitTest, GetNftBalance) {
+  std::map<GURL, std::string> responses;
+  std::string json;
+
+  GURL url = GURL(
+      "https://simplehash.wallet.brave.com/api/v0/nfts/solana/"
+      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG");
+
+  // Timeout results in null reponse
+  SetHTTPRequestTimeoutInterceptor();
+  TestFetchNftBalance("D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+                      mojom::kSolanaMainnet,
+                      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "",
+                      mojom::CoinType::SOL, std::nullopt);
+
+  // Invalid json  results in null reponse
+  json = R"({)";
+  responses[url] = json;
+  SetInterceptors(responses);
+  TestFetchNftBalance("D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+                      mojom::kSolanaMainnet,
+                      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "",
+                      mojom::CoinType::SOL, std::nullopt);
+
+  // Valid json
+  json = R"({
+    "nft_id": "solana.BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "chain": "solana",
+    "contract_address": "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG",
+    "token_id": null,
+    "name": "Metaplex AirDrop",
+    "description": "$MPLX Tokens were allocated based on previous wallet activity that had interacted with solana ecosystem.",
+    "image_url": "https://cdn.simplehash.com/assets/e009ff610f6b3ec204543bcb80862454533dc103917bb3cf454f0d432097b879.png",
+    "owners": [
+      {
+        "owner_address": "D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+        "quantity": 68,
+        "quantity_string": "68",
+        "first_acquired_date": "2022-11-10T22:57:48",
+        "last_acquired_date": "2022-11-10T22:57:48"
+      },
+      {
+        "owner_address": "53hkAsgKmeA6gopsSHt3tfn6Jcr12s4UforsexfhG637",
+        "quantity": 13,
+        "quantity_string": "13",
+        "first_acquired_date": "2022-09-28T04:05:19",
+        "last_acquired_date": "2022-09-30T08:36:04"
+      },
+      {
+        "owner_address": "9PedHCCYwJxv2m9Ls1G2jhzagrhMYbENT6D1vw9sRywq",
+        "quantity": 9,
+        "quantity_string": "9",
+        "first_acquired_date": "2022-09-27T22:09:14",
+        "last_acquired_date": "2022-09-29T21:34:44"
+      },
+      {
+        "owner_address": "skipped",
+        "quantity_string": "9",
+        "first_acquired_date": "2022-09-27T22:09:14",
+        "last_acquired_date": "2022-09-29T21:34:44"
+      }
+    ]
+  })";
+  responses[url] = json;
+  SetInterceptors(responses);
+
+  // If the wallet address is not an owner, a 0 balance is returned
+  TestFetchNftBalance("missing", mojom::kSolanaMainnet,
+                      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "",
+                      mojom::CoinType::SOL, 0);
+
+  // Correct balance is returned.
+  TestFetchNftBalance("D2agC8eDxzL5B3BrinD3o5yVwPzY318y87BPDQimpQgX",
+                      mojom::kSolanaMainnet,
+                      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "",
+                      mojom::CoinType::SOL, 68);
+
+  // Correct balance is returned.
+  TestFetchNftBalance("9PedHCCYwJxv2m9Ls1G2jhzagrhMYbENT6D1vw9sRywq",
+                      mojom::kSolanaMainnet,
+                      "BoSDWCAWmZEM7TQLg2gawt5wnurGyQu7c77tAcbtzfDG", "",
+                      mojom::CoinType::SOL, 9);
 }
 
 }  // namespace brave_wallet

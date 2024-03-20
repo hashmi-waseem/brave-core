@@ -24,6 +24,22 @@
 
 namespace brave_wallet {
 
+struct SolCompressedNftProofData {
+  std::string root;
+  std::string data_hash;
+  std::string creator_hash;
+  std::string owner;
+  std::vector<std::string> proof;
+  std::string merkle_tree;
+  std::string delegate;
+  uint64_t leaf_index;
+  uint64_t canopy_depth;
+
+  SolCompressedNftProofData();
+  SolCompressedNftProofData(const SolCompressedNftProofData& data);
+  ~SolCompressedNftProofData();
+};
+
 class SimpleHashClient {
  public:
   using APIRequestHelper = api_request_helper::APIRequestHelper;
@@ -44,6 +60,12 @@ class SimpleHashClient {
   using FetchAllNFTsFromSimpleHashCallback =
       base::OnceCallback<void(std::vector<mojom::BlockchainTokenPtr> nfts)>;
 
+  using FetchSolCompressedNftProofDataCallback =
+      base::OnceCallback<void(std::optional<SolCompressedNftProofData>)>;
+
+  using GetNftBalanceCallback =
+      base::OnceCallback<void(std::optional<uint64_t> balance)>;
+
   void FetchNFTsFromSimpleHash(const std::string& account_address,
                                const std::vector<std::string>& chain_ids,
                                mojom::CoinType coin,
@@ -57,11 +79,25 @@ class SimpleHashClient {
                                   mojom::CoinType coin,
                                   FetchAllNFTsFromSimpleHashCallback callback);
 
+  void FetchSolCompressedNftProofData(
+      const std::string& token_address,
+      FetchSolCompressedNftProofDataCallback callback);
+
+  void GetNftBalance(const std::string& wallet_address,
+                     const std::string& chain_id,
+                     const std::string& contract_address,
+                     const std::string& token_id,
+                     mojom::CoinType coin,
+                     GetNftBalanceCallback callback);
+
  private:
   FRIEND_TEST_ALL_PREFIXES(SimpleHashClientUnitTest, DecodeMintAddress);
   FRIEND_TEST_ALL_PREFIXES(SimpleHashClientUnitTest,
                            GetSimpleHashNftsByWalletUrl);
   FRIEND_TEST_ALL_PREFIXES(SimpleHashClientUnitTest, ParseNFTsFromSimpleHash);
+  FRIEND_TEST_ALL_PREFIXES(SimpleHashClientUnitTest,
+                           ParseSolCompressedNftProofData);
+  FRIEND_TEST_ALL_PREFIXES(SimpleHashClientUnitTest, ParseNftOwners);
 
   void OnFetchNFTsFromSimpleHash(mojom::CoinType coin,
                                  bool skip_spam,
@@ -78,6 +114,14 @@ class SimpleHashClient {
       std::vector<mojom::BlockchainTokenPtr> nfts,
       const std::optional<std::string>& next_cursor);
 
+  void OnGetNftBalance(const std::string& wallet_address,
+                       GetNftBalanceCallback callback,
+                       APIRequestResult api_request_result);
+
+  void OnFetchSolCompressedNftProofData(
+      FetchSolCompressedNftProofDataCallback callback,
+      APIRequestResult api_request_result);
+
   std::optional<std::pair<std::optional<std::string>,
                           std::vector<mojom::BlockchainTokenPtr>>>
   ParseNFTsFromSimpleHash(const base::Value& json_value,
@@ -85,10 +129,21 @@ class SimpleHashClient {
                           bool skip_spam,
                           bool only_spam);
 
+  std::optional<std::vector<std::pair<std::string, uint64_t>>> ParseNftOwners(
+      const base::Value& json_value);
+
+  std::optional<SolCompressedNftProofData> ParseSolCompressedNftProofData(
+      const base::Value& json_value);
+
   static GURL GetSimpleHashNftsByWalletUrl(
       const std::string& account_address,
       const std::vector<std::string>& chain_ids,
       const std::optional<std::string>& cursor);
+
+  static GURL GetNftUrl(const std::string& token_id,
+                        const std::string& contract_address,
+                        const std::string& chain_id,
+                        mojom::CoinType coin);
 
   std::unique_ptr<APIRequestHelper> api_request_helper_;
   base::WeakPtrFactory<SimpleHashClient> weak_ptr_factory_;

@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 
+#include "brave/components/brave_wallet/browser/simple_hash_client.h"
 
 namespace brave_wallet {
 
@@ -46,6 +47,16 @@ std::optional<SolanaInstruction> CreateAssociatedTokenAccount(
     const std::string& spl_token_mint_address);
 
 }  // namespace spl_associated_token_account_program
+
+namespace bubblegum_program {
+
+std::optional<SolanaInstruction> Transfer(
+    uint32_t canopy_depth,
+    const std::string& tree_authority,
+    const std::string& new_leaf_owner,
+    const SolCompressedNftProofData& proof);
+
+}  // namespace bubblegum_program
 
 }  // namespace solana
 

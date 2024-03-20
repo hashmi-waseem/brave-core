@@ -141,7 +141,7 @@ export const AddCustomTokenForm = (props: Props) => {
       if (!customAssetsNetwork || !tokenContractAddress) {
         return undefined
       }
-
+      console.log('add custom token form')
       return {
         chainId: customAssetsNetwork.chainId,
         coin: customAssetsNetwork.coin,
@@ -152,6 +152,7 @@ export const AddCustomTokenForm = (props: Props) => {
         coingeckoId,
         logo: iconURL,
         tokenId: '',
+        isCompressed: true, // TODO -fix
         isErc20: customAssetsNetwork.coin !== BraveWallet.CoinType.SOL,
         isErc721: false,
         isErc1155: false,

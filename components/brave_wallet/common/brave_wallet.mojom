@@ -918,6 +918,7 @@ struct BlockchainToken {
   string contract_address;
   string name;
   string logo;
+  bool is_compressed;
   bool is_erc20;
   bool is_erc721;
   bool is_erc1155;
@@ -1230,6 +1231,8 @@ const string kSolanaTokenProgramId = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5D
 const string kSolanaAssociatedTokenProgramId = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 const string kSolanaSysvarRentProgramId = "SysvarRent111111111111111111111111111111111";
 const string kSolanaMetadataProgramId = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s";
+const string kSolanaBubbleGumProgramId = "BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY";
+const string kSolanaAccountCompressionProgramId ="cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK";
 const string kSolanaConfigProgramId =
   "Config1111111111111111111111111111111111111";
 const string kSolanaStakeProgramId =
@@ -1525,6 +1528,16 @@ interface JsonRpcService {
                             string token_mint_address, string chain_id) =>
       (string amount, uint8 decimals, string uiAmountString,
        SolanaProviderError error, string error_message);
+
+  // Returns the balance of the NFT for the owner using the SimpleHash API.
+  GetNftBalance(string wallet_address,
+                string chain_id,
+                string contract_qaddress,
+                string token_id,
+                CoinType coin_type) => (uint64 balance,
+                                        SolanaProviderError error,
+                                        string error_message);
+
   // Returns the metadata json associated with the NFT account address
   GetSolTokenMetadata(string chain_id, string token_mint_address)
     => (string token_url, string response, SolanaProviderError error,
@@ -1657,6 +1670,7 @@ enum TransactionType {
   SolanaDappSignTransaction = 12,
   SolanaSwap = 13,
   ETHFilForwarderTransfer = 14, // Used to send from FEVM to FVM
+  SolanaCompressedNftTransfer = 15,
 };
 
 struct FilTxData {
@@ -1888,6 +1902,13 @@ interface SolanaTxManagerProxy {
       string encoded_transaction,
       TransactionType tx_type,
       SolanaSendTransactionOptions? send_options)
+      => (SolanaTxData? tx_data, SolanaProviderError error, string error_message);
+
+  MakeBubbleGumProgramTransferTxData(
+      string chain_id,
+      string token_address,
+      string from_wallet_address,
+      string to_wallet_address)
       => (SolanaTxData? tx_data, SolanaProviderError error, string error_message);
 };
 
@@ -2340,6 +2361,28 @@ enum SolanaTokenInstruction {
   kInitializeAccount3 = 18,
   kInitializeMultisig2 = 19,
   kInitializeMint2 = 20,
+};
+
+// https://docs.rs/mpl-bubblegum/latest/mpl_bubblegum/enum.InstructionName.html
+enum SolanaBubblegumInstruction {
+    kUnknown = 0,
+    kMintV1 = 1,
+    kRedeem = 2,
+    kCancelRedeem = 3,
+    kTransfer = 4,
+    kDelegate = 5,
+    kDecompressV1 = 6,
+    kCompress = 7,
+    kBurn = 8,
+    kCreateTree = 9,
+    kVerifyCreator = 10,
+    kUnverifyCreator = 11,
+    kVerifyCollection = 12,
+    kUnverifyCollection = 13,
+    kSetAndVerifyCollection = 14,
+    kMintToCollectionV1 = 15,
+    kSetDecompressibleState = 16,
+    kUpdateMetadata = 17,
 };
 
 // Solana instruction parameter names shared between C++ backend and UI.

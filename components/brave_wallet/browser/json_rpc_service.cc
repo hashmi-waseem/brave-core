@@ -290,6 +290,7 @@ JsonRpcService::JsonRpcService(
 
   nft_metadata_fetcher_ =
       std::make_unique<NftMetadataFetcher>(url_loader_factory, this, prefs_);
+  simple_hash_client_ = std::make_unique<SimpleHashClient>(url_loader_factory);
 }
 
 JsonRpcService::JsonRpcService(
@@ -2850,6 +2851,33 @@ void JsonRpcService::GetSolTokenMetadata(const std::string& chain_id,
                                              std::move(callback));
 }
 
+void JsonRpcService::GetNftBalance(const std::string& wallet_address,
+                                   const std::string& chain_id,
+                                   const std::string& contract_address,
+                                   const std::string& token_id,
+                                   mojom::CoinType coin,
+                                   GetNftBalanceCallback callback) {
+  auto internal_callback =
+      base::BindOnce(&JsonRpcService::OnGetNftBalance,
+                     weak_ptr_factory_.GetWeakPtr(), std::move(callback));
+
+  simple_hash_client_->GetNftBalance(wallet_address, chain_id, contract_address,
+                                     token_id, coin,
+                                     std::move(internal_callback));
+}
+
+void JsonRpcService::OnGetNftBalance(GetNftBalanceCallback callback,
+                                     std::optional<uint64_t> balance) {
+  if (!balance) {
+    std::move(callback).Run(
+        0, mojom::SolanaProviderError::kInternalError,
+        l10n_util::GetStringUTF8(IDS_WALLET_INTERNAL_ERROR));
+    return;
+  }
+
+  std::move(callback).Run(*balance, mojom::SolanaProviderError::kSuccess, "");
+}
+
 void JsonRpcService::IsSolanaBlockhashValid(
     const std::string& chain_id,
     const std::string& blockhash,
@@ -2950,6 +2978,7 @@ void JsonRpcService::SendSolanaTransaction(
   auto internal_callback =
       base::BindOnce(&JsonRpcService::OnSendSolanaTransaction,
                      weak_ptr_factory_.GetWeakPtr(), std::move(callback));
+
   RequestInternal(solana::sendTransaction(signed_tx, std::move(send_options)),
                   true, GetNetworkURL(prefs_, chain_id, mojom::CoinType::SOL),
                   std::move(internal_callback));

@@ -43,6 +43,7 @@ import { useModal } from '../../../../common/hooks/useOnClickOutside'
 import { useQuery } from '../../../../common/hooks/use-query'
 import {
   useGetUserTokensRegistryQuery,
+  useSendCompressedNftTransferMutation,
   useSendSPLTransferMutation,
   useSendERC20TransferMutation,
   useSendERC721TransferFromMutation,
@@ -130,6 +131,7 @@ export const SendScreen = React.memo((props: Props) => {
 
   // Mutations
   const [sendSPLTransfer] = useSendSPLTransferMutation()
+  const [sendCompressedNftTransfer] = useSendCompressedNftTransferMutation()
   const [sendEvmTransaction] = useSendEvmTransactionMutation()
   const [sendSolTransaction] = useSendSolTransactionMutation()
   const [sendFilTransaction] = useSendFilTransactionMutation()
@@ -368,7 +370,25 @@ export const SendScreen = React.memo((props: Props) => {
       }
 
       case BraveWallet.CoinType.SOL: {
-        if (
+        console.log('components/brave_wallet_ui/page/screens/send/send_screen/send_screen.tsx')
+        if (tokenFromParams.isCompressed) {
+          console.log('TRYING TO SEND COMPRESSED NFT')
+          // console.log('sendCompressedNftTransfer)
+          await sendCompressedNftTransfer({
+            network: networkFromParams,
+            fromAccount,
+            to: toAddress,
+            // TODO - do we remove value?
+            value: !tokenFromParams.isNft
+              ? new Amount(sendAmount)
+                  .multiplyByDecimals(tokenFromParams.decimals)
+                  .toHex()
+              : new Amount(sendAmount).toHex(),
+            splTokenMintAddress: tokenFromParams.contractAddress
+          })
+          resetSendFields()
+          return
+        } else if (
           tokenFromParams.contractAddress !== '' &&
           !tokenFromParams.isErc20 &&
           !tokenFromParams.isErc721

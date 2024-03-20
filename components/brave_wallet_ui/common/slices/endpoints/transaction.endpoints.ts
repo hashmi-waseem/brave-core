@@ -323,6 +323,65 @@ export const transactionEndpoints = ({
         })
     }),
 
+    sendCompressedNftTransfer: mutation<{ success: boolean }, SPLTransferFromParams>({
+      queryFn: async (payload, { endpoint }, extraOptions, baseQuery) => {
+        console.log('sendCompressedNftTransfer', 0)
+        try {
+          const { solanaTxManagerProxy, txService } = baseQuery(undefined).data
+
+          const { errorMessage: transferTxDataErrorMessage, txData } =
+            await solanaTxManagerProxy.makeBubbleGumProgramTransferTxData(
+              payload.network.chainId,
+              payload.splTokenMintAddress,
+              payload.fromAccount.address,
+              payload.to,
+              // BigInt(payload.value)
+            )
+          console.log('sendCompressedNftTransfer', 1, 'transferTxDataErrorMessage', transferTxDataErrorMessage, 'txData', txData)
+
+          if (!txData) {
+            throw new Error(
+              `Failed making SPL transfer data: ${transferTxDataErrorMessage}`
+            )
+          }
+          console.log('sendCompressedNftTransfer', 2)
+
+          const { errorMessage, success } =
+            await txService.addUnapprovedTransaction(
+              toTxDataUnion({ solanaTxData: txData }),
+              payload.network.chainId,
+              payload.fromAccount.accountId
+            )
+          console.log('sendCompressedNftTransfer', 3, 'errorMessage', errorMessage, 'success', success)
+
+          if (!success) {
+            throw new Error(errorMessage || 'unknown error')
+          }
+
+          console.log('sendCompressedNftTransfer', 4)
+          return {
+            data: {
+              success
+            }
+          }
+        } catch (error) {
+          return handleEndpointError(
+            endpoint,
+            `Compressed NFT Transfer failed:
+                  to: ${payload.to}
+                  value: ${payload.value}`,
+            error
+          )
+        }
+      },
+      invalidatesTags: (res, err, arg) =>
+        TX_CACHE_TAGS.LISTS({
+          chainId: null,
+          coin: arg.fromAccount.accountId.coin,
+          fromAccountId: arg.fromAccount.accountId
+        })
+    }),
+
     sendSolanaSerializedTransaction: mutation<
       boolean, // success,
       {

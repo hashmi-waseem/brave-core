@@ -135,6 +135,11 @@ base::flat_map<std::string, std::string> MakeBraveServicesKeyHeader() {
 
 namespace brave_wallet {
 
+SolCompressedNftProofData::SolCompressedNftProofData() = default;
+SolCompressedNftProofData::SolCompressedNftProofData(
+    const SolCompressedNftProofData& data) = default;
+SolCompressedNftProofData::~SolCompressedNftProofData() = default;
+
 SimpleHashClient::SimpleHashClient(
     scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory)
     : api_request_helper_(std::make_unique<APIRequestHelper>(
@@ -253,6 +258,96 @@ void SimpleHashClient::OnFetchAllNFTsFromSimpleHash(
 
   // Otherwise, return the nfts_so_far
   std::move(callback).Run(std::move(nfts_so_far));
+}
+
+// Calls
+// https://simplehash.wallet.brave.com/api/v0/nfts/proof/solana/{token_address}
+void SimpleHashClient::FetchSolCompressedNftProofData(
+    const std::string& token_address,
+    FetchSolCompressedNftProofDataCallback callback) {
+  LOG(ERROR) << "SimpleHashClient::FetchSolCompressedNftProofData";
+  GURL url = GURL(base::StrCat(
+      {kSimpleHashBraveProxyUrl, "/api/v0/nfts/proof/solana/", token_address}));
+  if (!url.is_valid()) {
+    std::move(callback).Run(std::nullopt);
+    return;
+  }
+
+  auto internal_callback =
+      base::BindOnce(&SimpleHashClient::OnFetchSolCompressedNftProofData,
+                     weak_ptr_factory_.GetWeakPtr(), std::move(callback));
+
+  api_request_helper_->Request("GET", url, "", "", std::move(internal_callback),
+                               MakeBraveServicesKeyHeader(),
+                               {.auto_retry_on_network_change = true});
+}
+
+void SimpleHashClient::OnFetchSolCompressedNftProofData(
+    FetchSolCompressedNftProofDataCallback callback,
+    APIRequestResult api_request_result) {
+  LOG(ERROR) << "SimpleHashClient::OnFetchSolCompressedNftProofData 0";
+  if (!api_request_result.Is2XXResponseCode()) {
+    std::move(callback).Run(std::nullopt);
+    return;
+  }
+  // LOG(ERROR) << "SimpleHashClient::OnFetchSolCompressedNftProofData 1 " <<
+  // api_request_result.TakeBody();
+
+  // Invalid JSON becomes an empty string after sanitization
+  if (api_request_result.value_body().is_none()) {
+    std::move(callback).Run(std::nullopt);
+    return;
+  }
+  LOG(ERROR) << "SimpleHashClient::OnFetchSolCompressedNftProofData 2";
+
+  std::move(callback).Run(
+      ParseSolCompressedNftProofData(api_request_result.TakeBody()));
+}
+
+void SimpleHashClient::GetNftBalance(const std::string& wallet_address,
+                                     const std::string& chain_id,
+                                     const std::string& contract_address,
+                                     const std::string& token_id,
+                                     mojom::CoinType coin,
+                                     GetNftBalanceCallback callback) {
+  GURL url = GetNftUrl(token_id, contract_address, chain_id, coin);
+  if (!url.is_valid()) {
+    std::move(callback).Run(std::nullopt);
+    return;
+  }
+
+  auto internal_callback = base::BindOnce(&SimpleHashClient::OnGetNftBalance,
+                                          weak_ptr_factory_.GetWeakPtr(),
+                                          wallet_address, std::move(callback));
+
+  api_request_helper_->Request("GET", url, "", "", std::move(internal_callback),
+                               MakeBraveServicesKeyHeader(),
+                               {.auto_retry_on_network_change = true});
+}
+
+void SimpleHashClient::OnGetNftBalance(const std::string& wallet_address,
+                                       GetNftBalanceCallback callback,
+                                       APIRequestResult api_request_result) {
+  if (!api_request_result.Is2XXResponseCode() ||
+      api_request_result.value_body().is_none()) {
+    std::move(callback).Run(std::nullopt);
+    return;
+  }
+
+  auto owners = ParseNftOwners(api_request_result.TakeBody());
+  if (!owners) {
+    std::move(callback).Run(std::nullopt);
+    return;
+  }
+
+  for (const auto& owner_balance : *owners) {
+    if (owner_balance.first == wallet_address) {
+      std::move(callback).Run(owner_balance.second);
+      return;
+    }
+  }
+
+  std::move(callback).Run(0);
 }
 
 std::optional<std::pair<std::optional<std::string>,
@@ -586,6 +681,20 @@ SimpleHashClient::ParseNFTsFromSimpleHash(const base::Value& json_value,
       token->token_id = Uint256ValueToHex(token_id_uint256);
     }
 
+    // is_compressed
+    auto* extra_metadata = nft->FindDict("extra_metadata");
+    bool is_compressed = false;
+    if (extra_metadata) {
+      auto* compression = extra_metadata->FindDict("compression");
+      if (compression) {
+        auto compressed = compression->FindBool("compressed");
+        if (type) {
+          is_compressed = *compressed;
+        }
+      }
+      token->is_compressed = is_compressed;
+    }
+
     // coin
     token->coin = coin;
 
@@ -593,6 +702,94 @@ SimpleHashClient::ParseNFTsFromSimpleHash(const base::Value& json_value,
   }
 
   return std::make_pair(next_cursor, std::move(nft_tokens));
+}
+
+std::optional<SolCompressedNftProofData>
+SimpleHashClient::ParseSolCompressedNftProofData(
+    const base::Value& json_value) {
+  LOG(ERROR) << "SimpleHashClient::ParseSolCompressedNftProofData";
+  const base::Value::Dict* dict = json_value.GetIfDict();
+  if (!dict) {
+    return std::nullopt;
+  }
+
+  SolCompressedNftProofData result;
+
+  const std::string* root_opt = dict->FindString("root");
+  const std::string* data_hash_opt = dict->FindString("data_hash");
+  const std::string* creator_hash_opt = dict->FindString("creator_hash");
+  std::optional<int> leaf_index_opt = dict->FindInt("leaf_index");
+  const std::string* owner_opt = dict->FindString("owner");
+  const std::string* merkle_tree_opt = dict->FindString("merkle_tree");
+  const std::string* delegate_opt = dict->FindString("delegate");
+  std::optional<int> canopy_depth_opt = dict->FindInt("canopy_depth");
+
+  if (!root_opt || !data_hash_opt || !creator_hash_opt || !leaf_index_opt ||
+      !owner_opt || !merkle_tree_opt ||
+      /* !delegate_opt || */ !canopy_depth_opt) {
+    return std::nullopt;
+  }
+
+  result.root = *root_opt;
+  result.data_hash = *data_hash_opt;
+  result.creator_hash = *creator_hash_opt;
+  result.leaf_index = *leaf_index_opt;
+  result.owner = *owner_opt;
+  result.merkle_tree = *merkle_tree_opt;
+  if (delegate_opt) {
+    result.delegate = *delegate_opt;
+  }
+  result.canopy_depth = static_cast<uint64_t>(*canopy_depth_opt);
+
+  const base::Value::List* proofs = dict->FindList("proof");
+  if (!proofs) {
+    return std::nullopt;
+  }
+
+  for (const auto& proof_value : *proofs) {
+    const std::string* proof_str = proof_value.GetIfString();
+    if (proof_str) {
+      result.proof.push_back(*proof_str);
+    }
+  }
+
+  return result;
+}
+
+std::optional<std::vector<std::pair<std::string, uint64_t>>>
+SimpleHashClient::ParseNftOwners(const base::Value& json_value) {
+  const base::Value::Dict* dict = json_value.GetIfDict();
+  if (!dict) {
+    return std::nullopt;
+  }
+
+  const base::Value::List* owners_opt = dict->FindList("owners");
+  if (!owners_opt) {
+    return std::nullopt;
+  }
+
+  std::vector<std::pair<std::string, uint64_t>> owners;
+  for (const auto& owner_val : *owners_opt) {
+    const auto* owner_dict = owner_val.GetIfDict();
+    if (!owner_dict) {
+      continue;
+    }
+
+    const std::string* owner_address_opt =
+        owner_dict->FindString("owner_address");
+    if (!owner_address_opt) {
+      continue;
+    }
+
+    const std::optional<int> quantity_opt = owner_dict->FindInt("quantity");
+    if (!quantity_opt) {
+      continue;
+    }
+
+    owners.push_back(
+        {*owner_address_opt, static_cast<uint64_t>(*quantity_opt)});
+  }
+  return owners;
 }
 
 // static
@@ -632,6 +829,35 @@ GURL SimpleHashClient::GetSimpleHashNftsByWalletUrl(
   // If cursor is provided, add it as a query parameter
   if (cursor) {
     url = net::AppendQueryParameter(url, "cursor", *cursor);
+  }
+
+  return url;
+}
+
+// static
+// Creates a URL like
+// https://simplehash.wallet.brave.com/api/v0/nfts/{chain}/{contract_address}/{token_id}
+GURL SimpleHashClient::GetNftUrl(const std::string& token_id,
+                                 const std::string& contract_address,
+                                 const std::string& chain_id,
+                                 mojom::CoinType coin) {
+  // Create the URL
+  const std::optional<std::string> simple_hash_chain_id =
+      ChainIdToSimpleHashChainId(chain_id);
+  if (!simple_hash_chain_id) {
+    return GURL();
+  }
+
+  GURL url;
+  if (coin == mojom::CoinType::SOL) {
+    // We don't include the token ID for solana. Instead we use the contract
+    // address (mint address) only.
+    url = GURL(base::StrCat({kSimpleHashBraveProxyUrl, "/api/v0/nfts/",
+                             *simple_hash_chain_id, "/", contract_address}));
+  } else {
+    url = GURL(base::StrCat({kSimpleHashBraveProxyUrl, "/api/v0/nfts/",
+                             *simple_hash_chain_id, "/", contract_address, "/",
+                             token_id}));
   }
 
   return url;

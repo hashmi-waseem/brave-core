@@ -313,6 +313,7 @@ export const {
   useRestoreWalletMutation,
   useRetryTransactionMutation,
   useSendBtcTransactionMutation,
+  useSendCompressedNftTransferMutation,
   useSendERC20TransferMutation,
   useSendERC721TransferFromMutation,
   useSendETHFilForwarderTransferMutation,

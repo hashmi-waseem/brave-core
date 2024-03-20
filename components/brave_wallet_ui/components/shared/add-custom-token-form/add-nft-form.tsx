@@ -121,6 +121,8 @@ export const AddNftForm = (props: Props) => {
         return undefined
       }
 
+      console.log('add custom nft form')
+
       return {
         chainId: customAssetsNetwork.chainId,
         coin: customAssetsNetwork.coin,
@@ -131,6 +133,7 @@ export const AddNftForm = (props: Props) => {
         coingeckoId: '',
         logo: '',
         tokenId: tokenId ? new Amount(tokenId).toHex() : '',
+        isCompressed: true, // TODO - hardcoding for now for testing purposes
         isErc20: false,
         isErc721:
           customAssetsNetwork.coin !== BraveWallet.CoinType.SOL && !!tokenId,
