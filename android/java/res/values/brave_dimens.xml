@@ -45,4 +45,6 @@
 
     <dimen name="onboarding_network_selection_item_width">103dp</dimen>
     <dimen name="onboarding_network_selection_item_height">96dp</dimen>
+    <!-- Playlist dimens -->
+    <dimen name="playlist_toolbar_height">64dp</dimen>
 </resources>
