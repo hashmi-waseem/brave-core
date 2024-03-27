@@ -10,7 +10,6 @@
 #include "base/json/values_util.h"
 #include "brave/components/brave_rewards/core/common/callback_helpers.h"
 #include "brave/components/brave_rewards/core/common/time_util.h"
-#include "brave/components/brave_rewards/core/endpoints/request_for.h"
 #include "brave/components/brave_rewards/core/state/state_keys.h"
 
 namespace brave_rewards::internal {
@@ -163,13 +162,13 @@ void RewardsParametersProvider::Fetch(GetParametersCallback callback) {
 
   refresh_timer_.Stop();
 
-  endpoints::RequestFor<endpoints::GetParameters>(engine()).Send(
+  Get<endpoints::GetParameters>().Request(
       base::BindOnce(&RewardsParametersProvider::OnEndpointResult,
                      weak_factory_.GetWeakPtr()));
 }
 
 void RewardsParametersProvider::OnEndpointResult(
-    endpoints::GetParameters::Result&& result) {
+    endpoints::GetParameters::Result result) {
   if (result.has_value()) {
     mojom::RewardsParametersPtr params = std::move(result.value());
     StoreParameters(*params);
