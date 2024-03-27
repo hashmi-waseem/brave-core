@@ -11,10 +11,8 @@
 #include <utility>
 
 #include "base/json/json_reader.h"
-#include "brave/components/brave_rewards/core/common/environment_config.h"
 #include "brave/components/brave_rewards/core/state/state_keys.h"
 #include "brave/components/brave_rewards/core/test/rewards_engine_test.h"
-#include "net/http/http_status_code.h"
 
 namespace brave_rewards::internal {
 
@@ -66,50 +64,20 @@ constexpr char kCachedParametersJSON[] = R"(
       }
     })";
 
-constexpr char kParametersEndpointResponse[] = R"(
-    {
-      "autocontribute": {
-        "choices": [1],
-        "defaultChoice": 1
-      },
-      "batRate": 0.3,
-      "custodianRegions": {
-        "bitflyer": {
-          "allow": [],
-          "block": []
-        },
-        "gemini": {
-          "allow": [],
-          "block": []
-        },
-        "uphold": {
-          "allow": [],
-          "block": []
-        }
-      },
-      "payoutStatus": {},
-      "tips": {
-        "defaultMonthlyChoices": ["0"],
-        "defaultTipChoices": ["0"]
-      },
-      "vbatDeadline": "2022-12-24T15:04:45.352584Z",
-      "vbatExpired": true,
-      "tosVersion": 3
-    })";
-
 }  // namespace
 
 class RewardsParametersProviderTest : public RewardsEngineTest {
  protected:
-  void AddParametersResponse(mojom::UrlResponsePtr response) {
-    std::string url = engine()
-                          .Get<EnvironmentConfig>()
-                          .rewards_api_url()
-                          .Resolve("/v1/parameters")
-                          .spec();
+  struct MockEndpoint : public endpoints::GetParameters {
+    explicit MockEndpoint(RewardsEngineImpl& engine)
+        : endpoints::GetParameters(engine) {}
 
-    AddNetworkResultForTesting(url, mojom::UrlMethod::GET, std::move(response));
-  }
+    void Request(RequestCallback callback) override {
+      std::move(callback).Run(std::move(*endpoint_result));
+    }
+
+    std::optional<Result> endpoint_result;
+  };
 };
 
 TEST_F(RewardsParametersProviderTest, DictToParameters) {
@@ -150,10 +118,12 @@ TEST_F(RewardsParametersProviderTest, GetParametersCached) {
 }
 
 TEST_F(RewardsParametersProviderTest, GetParameters) {
-  auto response = mojom::UrlResponse::New();
-  response->status_code = net::HttpStatusCode::HTTP_OK;
-  response->body = kParametersEndpointResponse;
-  AddParametersResponse(std::move(response));
+  auto endpoint_params = mojom::RewardsParameters::New();
+  endpoint_params->rate = .5;
+
+  auto endpoint = std::make_unique<MockEndpoint>(engine());
+  endpoint->endpoint_result = endpoint_params->Clone();
+  engine().SetHelperForTesting(std::move(endpoint));
 
   auto& provider = engine().Get<RewardsParametersProvider>();
 
@@ -161,20 +131,21 @@ TEST_F(RewardsParametersProviderTest, GetParameters) {
       [&](auto callback) { provider.GetParameters(std::move(callback)); });
 
   ASSERT_TRUE(params);
-  EXPECT_EQ(params->rate, 0.3);
+  EXPECT_EQ(*params, *endpoint_params);
 
   auto cached_params = provider.GetCachedParameters();
   ASSERT_TRUE(cached_params);
-  EXPECT_EQ(cached_params->rate, 0.3);
+  EXPECT_EQ(*cached_params, *endpoint_params);
 }
 
 TEST_F(RewardsParametersProviderTest, EndpointError) {
-  auto response = mojom::UrlResponse::New();
-  response->status_code = net::HttpStatusCode::HTTP_INTERNAL_SERVER_ERROR;
-  AddParametersResponse(std::move(response));
-
   engine().SetState(state::kParameters,
                     *base::JSONReader::Read(kCachedParametersJSON));
+
+  auto endpoint = std::make_unique<MockEndpoint>(engine());
+  endpoint->endpoint_result =
+      base::unexpected(endpoints::GetParameters::Error::kUnexpectedStatusCode);
+  engine().SetHelperForTesting(std::move(endpoint));
 
   auto& provider = engine().Get<RewardsParametersProvider>();
 

@@ -49,7 +49,7 @@ class RewardsParametersProvider
  private:
   void Fetch(GetParametersCallback callback);
 
-  void OnEndpointResult(endpoints::GetParameters::Result&& result);
+  void OnEndpointResult(endpoints::GetParameters::Result result);
 
   void RunCallbacks(mojom::RewardsParametersPtr parameters);
 
