@@ -132,6 +132,10 @@ TEST_F(
     BraveAdsSearchResultAdIntegrationTest,
     DoNotTriggerViewedEventIfShouldNotAlwaysTriggerAdEventsAndBraveRewardsAreDisabled) {
   // Arrange
+  base::test::ScopedFeatureList scoped_feature_list;
+  scoped_feature_list.InitAndDisableFeature(
+      kShouldAlwaysTriggerBraveSearchResultAdEventsFeature);
+
   test::DisableBraveRewards();
 
   // Act & Assert
@@ -193,6 +197,10 @@ TEST_F(
     BraveAdsSearchResultAdIntegrationTest,
     DoNotTriggerClickedEventIfShouldNotAlwaysTriggerAdEventsAndBraveRewardsAreDisabled) {
   // Arrange
+  base::test::ScopedFeatureList scoped_feature_list;
+  scoped_feature_list.InitAndDisableFeature(
+      kShouldAlwaysTriggerBraveSearchResultAdEventsFeature);
+
   test::DisableBraveRewards();
 
   const mojom::SearchResultAdInfoPtr search_result_ad =

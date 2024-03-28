@@ -77,8 +77,11 @@ class ScopedTestingAdsServiceSetter {
 class SearchResultAdTest : public InProcessBrowserTest {
  public:
   SearchResultAdTest() {
-    scoped_feature_list_.InitAndEnableFeature(
-        kShouldSupportSearchResultAdsFeature);
+    scoped_feature_list_.InitWithFeatures(
+        /*enabled_features=*/{},
+        /*disabled_features=*/{
+            kShouldAlwaysRunBraveAdsServiceFeature,
+            kShouldAlwaysTriggerBraveSearchResultAdEventsFeature});
   }
 
   void SetUpOnMainThread() override {

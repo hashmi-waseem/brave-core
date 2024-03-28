@@ -37,6 +37,11 @@ TEST(BraveAdsBraveAdsFeatureTest, ShouldAlwaysRunService) {
 }
 
 TEST(BraveAdsBraveAdsFeatureTest, ShouldNotAlwaysRunService) {
+  // Arrange
+  base::test::ScopedFeatureList scoped_feature_list;
+  scoped_feature_list.InitAndDisableFeature(
+      kShouldAlwaysRunBraveAdsServiceFeature);
+
   // Act & Assert
   EXPECT_FALSE(ShouldAlwaysRunService());
 }
@@ -65,6 +70,11 @@ TEST(BraveAdsBraveAdsFeatureTest, ShouldSupportSearchResultAds) {
 }
 
 TEST(BraveAdsBraveAdsFeatureTest, ShouldNotSupportSearchResultAds) {
+  // Arrange
+  base::test::ScopedFeatureList scoped_feature_list;
+  scoped_feature_list.InitAndDisableFeature(
+      kShouldSupportSearchResultAdsFeature);
+
   // Act & Assert
   EXPECT_FALSE(ShouldSupportSearchResultAds());
 }
@@ -79,6 +89,11 @@ TEST(BraveAdsBraveAdsFeatureTest, ShouldAlwaysTriggerSearchResultAdEvents) {
 }
 
 TEST(BraveAdsBraveAdsFeatureTest, ShouldNotAlwaysTriggerSearchResultAdEvents) {
+  // Arrange
+  base::test::ScopedFeatureList scoped_feature_list;
+  scoped_feature_list.InitAndDisableFeature(
+      kShouldAlwaysTriggerBraveSearchResultAdEventsFeature);
+
   // Act & Assert
   EXPECT_FALSE(ShouldAlwaysTriggerSearchResultAdEvents());
 }
