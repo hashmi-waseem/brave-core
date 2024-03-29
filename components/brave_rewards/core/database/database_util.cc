@@ -9,13 +9,6 @@
 #include "base/strings/stringprintf.h"
 #include "brave/components/brave_rewards/core/database/database_util.h"
 
-namespace {
-
-const int kCurrentVersionNumber = 40;
-const int kCompatibleVersionNumber = 1;
-
-}  // namespace
-
 namespace brave_rewards::internal {
 namespace database {
 
@@ -91,18 +84,10 @@ void BindString(mojom::DBCommand* command,
   command->bindings.push_back(std::move(binding));
 }
 
-int32_t GetCurrentVersion() {
-  return kCurrentVersionNumber;
-}
-
-int32_t GetCompatibleVersion() {
-  return kCompatibleVersionNumber;
-}
-
 void OnResultCallback(ResultCallback callback,
                       mojom::DBCommandResponsePtr response) {
   if (!response ||
-      response->status != mojom::DBCommandResponse::Status::RESPONSE_OK) {
+      response->status != mojom::DBCommandResponse::Status::kSuccess) {
     std::move(callback).Run(mojom::Result::FAILED);
     return;
   }

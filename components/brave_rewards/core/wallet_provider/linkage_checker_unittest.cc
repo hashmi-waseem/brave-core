@@ -68,7 +68,7 @@ TEST_F(RewardsLinkageChecker, ServerLinked) {
   InitializeEngine();
   task_environment().RunUntilIdle();
 
-  auto [external_wallet] =
+  auto external_wallet =
       WaitFor<mojom::ExternalWalletPtr>([this](auto callback) {
         engine().GetExternalWallet(std::move(callback));
       });
@@ -92,7 +92,7 @@ TEST_F(RewardsLinkageChecker, ServerUnlinked) {
   InitializeEngine();
   task_environment().RunUntilIdle();
 
-  auto [external_wallet] =
+  auto external_wallet =
       WaitFor<mojom::ExternalWalletPtr>([this](auto callback) {
         engine().GetExternalWallet(std::move(callback));
       });

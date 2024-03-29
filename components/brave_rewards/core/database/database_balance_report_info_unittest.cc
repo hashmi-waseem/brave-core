@@ -34,7 +34,7 @@ TEST_F(DatabaseBalanceReportTest, InsertOrUpdateOk) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
-        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::RUN);
+        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::kRun);
         const std::string query =
             "INSERT OR REPLACE INTO balance_report_info "
             "(balance_report_id, grants_ugp, grants_ads, auto_contribute, "
@@ -66,7 +66,8 @@ TEST_F(DatabaseBalanceReportTest, GetAllRecordsOk) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
-        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::READ);
+        ASSERT_EQ(transaction->commands[0]->type,
+                  mojom::DBCommand::Type::kRead);
         const std::string query =
             "SELECT balance_report_id, grants_ugp, grants_ads, "
             "auto_contribute, tip_recurring, tip "
@@ -90,7 +91,8 @@ TEST_F(DatabaseBalanceReportTest, GetRecordOk) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 2u);
-        ASSERT_EQ(transaction->commands[1]->type, mojom::DBCommand::Type::READ);
+        ASSERT_EQ(transaction->commands[1]->type,
+                  mojom::DBCommand::Type::kRead);
         const std::string query =
             "SELECT balance_report_id, grants_ugp, grants_ads, "
             "auto_contribute, tip_recurring, tip "
@@ -116,7 +118,7 @@ TEST_F(DatabaseBalanceReportTest, DeleteAllRecordsOk) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
         ASSERT_EQ(transaction->commands[0]->type,
-                  mojom::DBCommand::Type::EXECUTE);
+                  mojom::DBCommand::Type::kExecute);
         const std::string query = "DELETE FROM balance_report_info";
         ASSERT_EQ(transaction->commands[0]->command, query);
         ASSERT_EQ(transaction->commands[0]->record_bindings.size(), 0u);

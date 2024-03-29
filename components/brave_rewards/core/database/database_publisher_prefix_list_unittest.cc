@@ -70,7 +70,7 @@ TEST_F(DatabasePublisherPrefixListTest, Reset) {
             "VALUES (x'00000000'),(x'00000001'),(x'00000002'),"));
 
         auto response = mojom::DBCommandResponse::New();
-        response->status = mojom::DBCommandResponse::Status::RESPONSE_OK;
+        response->status = mojom::DBCommandResponse::Status::kSuccess;
         std::move(callback).Run(std::move(response));
       })
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {

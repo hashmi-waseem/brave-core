@@ -36,10 +36,8 @@ class RewardsPostChallengesTest : public RewardsEngineTest {
 
     PostChallenges endpoint(engine());
 
-    auto [result] = WaitFor<PostChallenges::Result>(
+    return WaitFor<PostChallenges::Result>(
         [&](auto callback) { endpoint.Request(std::move(callback)); });
-
-    return std::move(result);
   }
 };
 

@@ -49,10 +49,33 @@ class RewardsEngineTest : public testing::Test {
   void SetLogCallbackForTesting(TestRewardsEngineClient::LogCallback callback);
 
   // Executes the supplied lambda with an appropriate callback, waits until the
+  // callback has been executed, and the returns the value to the caller.
+  template <typename F>
+  void WaitFor(F fn) {
+    base::RunLoop run_loop;
+    fn(base::BindLambdaForTesting([&run_loop]() { run_loop.Quit(); }));
+    run_loop.Run();
+  }
+
+  // Executes the supplied lambda with an appropriate callback, waits until the
+  // callback has been executed, and the returns the value to the caller.
+  template <typename T, typename F>
+  std::decay_t<T> WaitFor(F fn) {
+    base::RunLoop run_loop;
+    std::optional<std::decay_t<T>> result;
+    fn(base::BindLambdaForTesting([&result, &run_loop](T arg) {
+      result = std::decay_t<T>(std::move(arg));
+      run_loop.Quit();
+    }));
+    run_loop.Run();
+    return std::move(*result);
+  }
+
+  // Executes the supplied lambda with an appropriate callback, waits until the
   // callback has been executed, and the returns the values to the caller as a
   // tuple.
   template <typename... Args, typename F>
-  std::tuple<std::decay_t<Args>...> WaitFor(F fn) {
+  std::tuple<std::decay_t<Args>...> WaitForValues(F fn) {
     base::RunLoop run_loop;
     std::optional<std::tuple<std::decay_t<Args>...>> result;
     fn(base::BindLambdaForTesting([&result, &run_loop](Args... args) {

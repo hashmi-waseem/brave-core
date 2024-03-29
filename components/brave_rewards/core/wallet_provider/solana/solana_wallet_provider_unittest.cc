@@ -41,7 +41,7 @@ TEST_F(RewardsSolanaWalletProviderTest, LinkingSuccess) {
       config().rewards_grant_url().Resolve("/v3/wallet/challenges").spec(),
       mojom::UrlMethod::POST, std::move(challenge_response));
 
-  auto [login_params] =
+  auto login_params =
       WaitFor<mojom::ExternalWalletLoginParamsPtr>([this](auto callback) {
         engine().Get<SolanaWalletProvider>().BeginLogin(std::move(callback));
       });
@@ -82,7 +82,7 @@ TEST_F(RewardsSolanaWalletProviderTest, LinkingSuccess) {
   engine().Get<SolanaWalletProvider>().PollWalletStatus();
   task_environment().RunUntilIdle();
 
-  auto [external_wallet] =
+  auto external_wallet =
       WaitFor<mojom::ExternalWalletPtr>([this](auto callback) {
         engine().GetExternalWallet(std::move(callback));
       });
@@ -102,7 +102,7 @@ TEST_F(RewardsSolanaWalletProviderTest, LinkingSuccess) {
       std::move(solana_balance));
 
   auto [balance_result, balance_value] =
-      WaitFor<mojom::Result, double>([this](auto callback) {
+      WaitForValues<mojom::Result, double>([this](auto callback) {
         engine().Get<SolanaWalletProvider>().FetchBalance(std::move(callback));
       });
 

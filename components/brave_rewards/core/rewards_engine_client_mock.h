@@ -18,7 +18,7 @@ namespace brave_rewards::internal {
 
 inline const auto db_error_response = [] {
   auto response = mojom::DBCommandResponse::New();
-  response->status = mojom::DBCommandResponse::Status::RESPONSE_ERROR;
+  response->status = mojom::DBCommandResponse::Status::kCommandError;
   return response;
 }();
 

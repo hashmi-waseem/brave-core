@@ -213,7 +213,7 @@ class TestRewardsEngineClient : public mojom::RewardsEngineClient {
   using LogCallback = base::RepeatingCallback<void(const std::string&)>;
   void SetLogCallbackForTesting(LogCallback callback);
 
-  RewardsDatabase* database() { return &engine_database_; }
+  RewardsDatabase& database() { return engine_database_; }
 
  private:
   RewardsDatabase engine_database_;

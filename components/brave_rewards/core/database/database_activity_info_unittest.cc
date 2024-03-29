@@ -45,7 +45,7 @@ TEST_F(DatabaseActivityInfoTest, InsertOrUpdateOk) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
-        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::RUN);
+        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::kRun);
         const std::string query =
             "INSERT OR REPLACE INTO activity_info "
             "(publisher_id, duration, score, percent, "
@@ -88,7 +88,8 @@ TEST_F(DatabaseActivityInfoTest, GetRecordsListEmpty) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
-        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::READ);
+        ASSERT_EQ(transaction->commands[0]->type,
+                  mojom::DBCommand::Type::kRead);
         const std::string query =
             "SELECT ai.publisher_id, ai.duration, ai.score, "
             "ai.percent, ai.weight, spi.status, spi.updated_at, pi.excluded, "
@@ -121,7 +122,8 @@ TEST_F(DatabaseActivityInfoTest, GetRecordsListOk) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
-        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::READ);
+        ASSERT_EQ(transaction->commands[0]->type,
+                  mojom::DBCommand::Type::kRead);
         const std::string query =
             "SELECT ai.publisher_id, ai.duration, ai.score, "
             "ai.percent, ai.weight, spi.status, spi.updated_at, pi.excluded, "
@@ -173,7 +175,7 @@ TEST_F(DatabaseActivityInfoTest, DeleteRecordOk) {
       .WillOnce([](mojom::DBTransactionPtr transaction, auto callback) {
         ASSERT_TRUE(transaction);
         ASSERT_EQ(transaction->commands.size(), 1u);
-        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::RUN);
+        ASSERT_EQ(transaction->commands[0]->type, mojom::DBCommand::Type::kRun);
         const std::string query =
             "DELETE FROM activity_info "
             "WHERE publisher_id = ? AND reconcile_stamp = ?";
