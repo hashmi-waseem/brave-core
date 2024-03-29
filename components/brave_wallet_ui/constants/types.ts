@@ -619,6 +619,9 @@ export enum WalletRoutes {
   // dev bitcoin screen
   DevBitcoin = '/dev-bitcoin',
 
+  // dev zcash screen
+  DevZCash = '/dev-zcash',
+
   // NFT Pining
   LocalIpfsNode = '/crypto/local-ipfs-node',
   InspectNfts = '/crypto/inspect-nfts',
