@@ -46,6 +46,8 @@ inline constexpr char kSimpleHashBraveProxyUrl[] =
     "https://simplehash.wallet.brave.com";
 
 inline constexpr webui::LocalizedString kLocalizedStrings[] = {
+    {"braveWalletAccountNameTooLongError",
+     IDS_BRAVE_WALLET_ACCOUNT_NAME_TOO_LONG_ERROR},
     {"braveWalletFoundIssues", IDS_BRAVE_WALLET_FOUND_ISSUES},
     {"braveWalletContract", IDS_BRAVE_WALLET_CONTRACT},
     {"braveWalletFoundRisks", IDS_BRAVE_WALLET_FOUND_RISKS},
