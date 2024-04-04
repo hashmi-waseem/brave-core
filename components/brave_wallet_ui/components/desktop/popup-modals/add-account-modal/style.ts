@@ -4,8 +4,17 @@
 // you can obtain one at https://mozilla.org/MPL/2.0/.
 
 import styled from 'styled-components'
+import AlertReact from '@brave/leo/react/alert'
 import * as leo from '@brave/leo/tokens/css'
 import InfoLogo from '../../../../assets/svg-icons/info-icon.svg'
+
+export const Alert = styled(AlertReact)`
+  margin-bottom: 15px;
+
+  &:first-of-type {
+    margin: 15px 0px;
+  }
+`
 
 export const StyledWrapper = styled.div`
   display: flex;
@@ -83,18 +92,6 @@ export const ImportButton = styled.label`
 export const ErrorText = styled.span`
   font: ${leo.font.default.regular};
   color: ${leo.color.systemfeedback.errorText};
-`
-
-export const ImportDisclaimer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  background-color: ${(p) => p.theme.color.warningBackground};
-  border-radius: 16px;
-  padding: 10px;
-  margin: 15px 0px 15px 0px;
 `
 
 export const SubmitButtonWrapper = styled.div`
