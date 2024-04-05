@@ -1432,7 +1432,8 @@ const emptySvmRawInfo: BraveWallet.BlowfishSolanaStateChangeRawInfoDataUnion = {
   solStakeAuthorityChangeData: undefined,
   solTransferData: undefined,
   splApprovalData: undefined,
-  splTransferData: undefined
+  splTransferData: undefined,
+  userAccountOwnerChangeData: undefined
 }
 
 export const mockReceiveSolSimulation: BraveWallet.SolanaSimulationResponse = {
