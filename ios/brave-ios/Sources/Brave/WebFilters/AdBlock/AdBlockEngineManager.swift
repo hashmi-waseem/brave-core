@@ -159,10 +159,7 @@ import os
 
     // Restart the task
     delayTask = Task {
-      if !checkHasAllInfo(for: enabledSources) {
-        try await Task.sleep(seconds: 60)
-      }
-
+      try await Task.sleep(seconds: 60)
       await compileAvailableIfNeeded(
         for: enabledSources,
         resourcesInfo: resourcesInfo
@@ -196,7 +193,7 @@ import os
 
   func checkHasAllInfo(for sources: [GroupedAdBlockEngine.Source]) -> Bool {
     let availableSources = compilableFiles(for: sources).map({ $0.filterListInfo.source })
-    return availableSources.allSatisfy({ sources.contains($0) })
+    return sources.allSatisfy({ availableSources.contains($0) })
   }
 
   /// This will compile available data right away if it is needed
@@ -258,7 +255,7 @@ import os
     ContentBlockerManager.log.debug(
       """
       Set `\(self.cacheFolderName)` (\(group.fileType.debugDescription)) engine from \(group.infos.count) sources:
-      \(group.debugDescription)"
+      \(group.debugDescription)
       """
     )
     self.engine = engine
