@@ -36,9 +36,6 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.brave.playlist.util.ConstantUtils;
-import com.brave.playlist.util.PlaylistPreferenceUtils;
-import com.brave.playlist.util.PlaylistUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.wireguard.android.backend.GoBackend;
 
@@ -132,6 +129,9 @@ import org.chromium.chrome.browser.onboarding.v2.HighlightDialogFragment;
 import org.chromium.chrome.browser.onboarding.v2.HighlightItem;
 import org.chromium.chrome.browser.onboarding.v2.HighlightView;
 import org.chromium.chrome.browser.playlist.PlaylistHostActivity;
+import org.chromium.chrome.browser.playlist.kotlin.util.ConstantUtils;
+import org.chromium.chrome.browser.playlist.kotlin.util.PlaylistPreferenceUtils;
+import org.chromium.chrome.browser.playlist.kotlin.util.PlaylistUtils;
 import org.chromium.chrome.browser.playlist.settings.BravePlaylistPreferences;
 import org.chromium.chrome.browser.preferences.BravePref;
 import org.chromium.chrome.browser.preferences.BravePrefServiceBridge;
