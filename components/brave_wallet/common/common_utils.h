@@ -20,10 +20,16 @@ inline constexpr mojom::CoinType kAllCoins[] = {
     mojom::CoinType::BTC, mojom::CoinType::ZEC};
 
 inline constexpr mojom::KeyringId kAllKeyrings[] = {
-    mojom::KeyringId::kDefault,          mojom::KeyringId::kBitcoin84,
-    mojom::KeyringId::kBitcoin84Testnet, mojom::KeyringId::kFilecoin,
-    mojom::KeyringId::kFilecoinTestnet,  mojom::KeyringId::kSolana,
-    mojom::KeyringId::kZCashMainnet,     mojom::KeyringId::kZCashTestnet};
+    mojom::KeyringId::kDefault,
+    mojom::KeyringId::kBitcoin84,
+    mojom::KeyringId::kBitcoin84Testnet,
+    mojom::KeyringId::kFilecoin,
+    mojom::KeyringId::kFilecoinTestnet,
+    mojom::KeyringId::kSolana,
+    mojom::KeyringId::kZCashMainnet,
+    mojom::KeyringId::kZCashTestnet,
+    mojom::KeyringId::kBitcoinImported,
+    mojom::KeyringId::kBitcoinImportedTestnet};
 
 bool IsZCashKeyring(mojom::KeyringId keyring_id);
 
@@ -41,6 +47,8 @@ bool IsFilecoinKeyringId(mojom::KeyringId keyring_id);
 bool IsBitcoinKeyring(mojom::KeyringId keyring_id);
 bool IsBitcoinMainnetKeyring(mojom::KeyringId keyring_id);
 bool IsBitcoinTestnetKeyring(mojom::KeyringId keyring_id);
+bool IsBitcoinHDKeyring(mojom::KeyringId keyring_id);
+bool IsBitcoinImportKeyring(mojom::KeyringId keyring_id);
 bool IsBitcoinNetwork(const std::string& network_id);
 bool IsBitcoinAccount(const mojom::AccountId& account_id);
 
@@ -69,20 +77,14 @@ mojom::AccountIdPtr MakeAccountId(mojom::CoinType coin,
                                   mojom::KeyringId keyring_id,
                                   mojom::AccountKind kind,
                                   const std::string& address);
-mojom::AccountIdPtr MakeBitcoinAccountId(mojom::CoinType coin,
-                                         mojom::KeyringId keyring_id,
-                                         mojom::AccountKind kind,
-                                         uint32_t account_index);
+mojom::AccountIdPtr MakeIndexBasedAccountId(mojom::CoinType coin,
+                                            mojom::KeyringId keyring_id,
+                                            mojom::AccountKind kind,
+                                            uint32_t account_index);
 std::string GetNetworkForBitcoinKeyring(const mojom::KeyringId& keyring_id);
 std::string GetNetworkForBitcoinAccount(const mojom::AccountIdPtr& account_id);
 
 std::string GetNetworkForZCashKeyring(const mojom::KeyringId& keyring_id);
-
-mojom::AccountIdPtr MakeZCashAccountId(mojom::CoinType coin,
-                                       mojom::KeyringId keyring_id,
-                                       mojom::AccountKind kind,
-                                       uint32_t account_index);
-
 }  // namespace brave_wallet
 
 #endif  // BRAVE_COMPONENTS_BRAVE_WALLET_COMMON_COMMON_UTILS_H_

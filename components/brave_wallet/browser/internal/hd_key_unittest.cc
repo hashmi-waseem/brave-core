@@ -11,6 +11,7 @@
 #include "base/strings/string_util.h"
 #include "brave/components/brave_wallet/browser/brave_wallet_utils.h"
 #include "brave/components/brave_wallet/browser/test_utils.h"
+#include "brave/components/brave_wallet/common/bitcoin_utils.h"
 #include "brave/components/brave_wallet/common/encoding_utils.h"
 #include "brave/components/brave_wallet/common/eth_address.h"
 #include "brave/components/brave_wallet/common/hash_utils.h"
@@ -590,9 +591,9 @@ TEST(HDKeyUnitTest, GetSegwitAddress) {
   EXPECT_EQ(
       base::HexEncode(hdkey->GetPublicKeyBytes()),
       "0279BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798");
-  EXPECT_EQ(hdkey->GetSegwitAddress(false),
+  EXPECT_EQ(PubkeyToSegwitAddress(hdkey->GetPublicKeyBytes(), false),
             "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4");
-  EXPECT_EQ(hdkey->GetSegwitAddress(true),
+  EXPECT_EQ(PubkeyToSegwitAddress(hdkey->GetPublicKeyBytes(), true),
             "tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx");
   // TODO(apaymyshev): support P2WSH.
 }
@@ -649,7 +650,7 @@ TEST(HDKeyUnitTest, Bip84TestVectors) {
   EXPECT_EQ(
       base::HexEncode(base->GetPublicKeyBytes()),
       "0330D54FD0DD420A6E5F8D3624F5F3482CAE350F79D5F0753BF5BEEF9C2D91AF3C");
-  EXPECT_EQ(base->GetSegwitAddress(false),
+  EXPECT_EQ(PubkeyToSegwitAddress(base->GetPublicKeyBytes(), false),
             "bc1qcr8te4kr609gcawutmrza0j4xv80jy8z306fyu");
 
   base = m_key->DeriveChildFromPath("m/84'/0'/0'/0/1");
@@ -658,7 +659,7 @@ TEST(HDKeyUnitTest, Bip84TestVectors) {
   EXPECT_EQ(
       base::HexEncode(base->GetPublicKeyBytes()),
       "03E775FD51F0DFB8CD865D9FF1CCA2A158CF651FE997FDC9FEE9C1D3B5E995EA77");
-  EXPECT_EQ(base->GetSegwitAddress(false),
+  EXPECT_EQ(PubkeyToSegwitAddress(base->GetPublicKeyBytes(), false),
             "bc1qnjg0jd8228aq7egyzacy8cys3knf9xvrerkf9g");
 
   base = m_key->DeriveChildFromPath("m/84'/0'/0'/1/0");
@@ -667,7 +668,7 @@ TEST(HDKeyUnitTest, Bip84TestVectors) {
   EXPECT_EQ(
       base::HexEncode(base->GetPublicKeyBytes()),
       "03025324888E429AB8E3DBAF1F7802648B9CD01E9B418485C5FA4C1B9B5700E1A6");
-  EXPECT_EQ(base->GetSegwitAddress(false),
+  EXPECT_EQ(PubkeyToSegwitAddress(base->GetPublicKeyBytes(), false),
             "bc1q8c6fshw2dlwun7ekn9qwf37cu2rn755upcp6el");
 }
 

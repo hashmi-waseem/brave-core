@@ -3504,7 +3504,7 @@ TEST_F(KeyringServiceUnitTest, GetBitcoinAddresses) {
   EXPECT_THAT(GetAccountUtils(&service).AllBtcAccounts(), testing::IsEmpty());
 
   auto added_account = AddAccount(&service, mojom::CoinType::BTC,
-                                  mojom::kBitcoinKeyring84Id, "Btc Acc");
+                                  mojom::KeyringId::kBitcoin84, "Btc Acc");
 
   EXPECT_THAT(GetAccountUtils(&service).AllBtcAccounts(), testing::SizeIs(1u));
   auto btc_acc = GetAccountUtils(&service).AllBtcAccounts()[0]->Clone();
@@ -3513,7 +3513,7 @@ TEST_F(KeyringServiceUnitTest, GetBitcoinAddresses) {
   EXPECT_EQ(btc_acc->name, "Btc Acc");
   EXPECT_EQ(btc_acc->account_id->kind, mojom::AccountKind::kDerived);
   EXPECT_EQ(btc_acc->account_id->coin, mojom::CoinType::BTC);
-  EXPECT_EQ(btc_acc->account_id->keyring_id, mojom::kBitcoinKeyring84Id);
+  EXPECT_EQ(btc_acc->account_id->keyring_id, mojom::KeyringId::kBitcoin84);
 
   auto addresses = service.GetBitcoinAddresses(btc_acc->account_id);
   ASSERT_TRUE(addresses);

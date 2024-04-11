@@ -11,6 +11,8 @@
 
 #include "base/check.h"
 #include "base/notimplemented.h"
+#include "base/notreached.h"
+#include "brave/components/brave_wallet/common/bitcoin_utils.h"
 
 namespace brave_wallet {
 
@@ -29,7 +31,7 @@ std::optional<std::string> BitcoinKeyring::GetAddress(
     return std::nullopt;
   }
 
-  return hd_key->GetSegwitAddress(testnet_);
+  return PubkeyToSegwitAddress(hd_key->GetPublicKeyBytes(), testnet_);
 }
 
 std::optional<std::vector<uint8_t>> BitcoinKeyring::GetPubkey(
@@ -55,14 +57,35 @@ std::optional<std::vector<uint8_t>> BitcoinKeyring::SignMessage(
   return hd_key->SignDer(message);
 }
 
+std::string BitcoinKeyring::ImportAccount(
+    const std::vector<uint8_t>& private_key) {
+  NOTREACHED();
+  return "";
+}
+
+bool BitcoinKeyring::RemoveImportedAccount(const std::string& address) {
+  NOTREACHED();
+  return false;
+}
+
+std::string BitcoinKeyring::GetDiscoveryAddress(size_t index) const {
+  NOTREACHED();
+  return "";
+}
+
+std::vector<std::string> BitcoinKeyring::GetImportedAccountsForTesting() const {
+  NOTREACHED();
+  return {};
+}
+
 std::string BitcoinKeyring::EncodePrivateKeyForExport(
     const std::string& address) {
-  NOTIMPLEMENTED();
+  NOTREACHED();
   return "";
 }
 
 std::string BitcoinKeyring::GetAddressInternal(const HDKey& hd_key) const {
-  return hd_key.GetSegwitAddress(testnet_);
+  return PubkeyToSegwitAddress(hd_key.GetPublicKeyBytes(), testnet_);
 }
 
 std::unique_ptr<HDKey> BitcoinKeyring::DeriveAccount(uint32_t index) const {

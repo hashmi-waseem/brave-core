@@ -41,7 +41,9 @@ TEST(CommonUtils, IsFilecoinKeyringId) {
 TEST(CommonUtils, IsBitcoinKeyring) {
   for (const auto& keyring_id : kAllKeyrings) {
     if (keyring_id == mojom::KeyringId::kBitcoin84 ||
-        keyring_id == mojom::KeyringId::kBitcoin84Testnet) {
+        keyring_id == mojom::KeyringId::kBitcoin84Testnet ||
+        keyring_id == mojom::KeyringId::kBitcoinImported ||
+        keyring_id == mojom::KeyringId::kBitcoinImportedTestnet) {
       EXPECT_TRUE(IsBitcoinKeyring(keyring_id));
     } else {
       EXPECT_FALSE(IsBitcoinKeyring(keyring_id));
@@ -51,7 +53,8 @@ TEST(CommonUtils, IsBitcoinKeyring) {
 
 TEST(CommonUtils, IsBitcoinMainnetKeyring) {
   for (const auto& keyring_id : kAllKeyrings) {
-    if (keyring_id == mojom::KeyringId::kBitcoin84) {
+    if (keyring_id == mojom::KeyringId::kBitcoin84 ||
+        keyring_id == mojom::KeyringId::kBitcoinImported) {
       EXPECT_TRUE(IsBitcoinMainnetKeyring(keyring_id));
     } else {
       EXPECT_FALSE(IsBitcoinMainnetKeyring(keyring_id));
@@ -61,7 +64,8 @@ TEST(CommonUtils, IsBitcoinMainnetKeyring) {
 
 TEST(CommonUtils, IsBitcoinTestnetKeyring) {
   for (const auto& keyring_id : kAllKeyrings) {
-    if (keyring_id == mojom::KeyringId::kBitcoin84Testnet) {
+    if (keyring_id == mojom::KeyringId::kBitcoin84Testnet ||
+        keyring_id == mojom::KeyringId::kBitcoinImportedTestnet) {
       EXPECT_TRUE(IsBitcoinTestnetKeyring(keyring_id));
     } else {
       EXPECT_FALSE(IsBitcoinTestnetKeyring(keyring_id));
@@ -81,10 +85,10 @@ TEST(CommonUtils, IsBitcoinNetwork) {
 }
 
 TEST(CommonUtils, IsBitcoinAccount) {
-  EXPECT_TRUE(IsBitcoinAccount(
-      *MakeBitcoinAccountId(mojom::CoinType::BTC, mojom::KeyringId::kBitcoin84,
-                            mojom::AccountKind::kDerived, 4)));
-  EXPECT_TRUE(IsBitcoinAccount(*MakeBitcoinAccountId(
+  EXPECT_TRUE(IsBitcoinAccount(*MakeIndexBasedAccountId(
+      mojom::CoinType::BTC, mojom::KeyringId::kBitcoin84,
+      mojom::AccountKind::kDerived, 4)));
+  EXPECT_TRUE(IsBitcoinAccount(*MakeIndexBasedAccountId(
       mojom::CoinType::BTC, mojom::KeyringId::kBitcoin84Testnet,
       mojom::AccountKind::kDerived, 7)));
 
@@ -148,6 +152,9 @@ TEST(CommonUtils, GetSupportedKeyrings) {
     if (IsBitcoinEnabled()) {
       EXPECT_EQ(keyrings[last_pos++], mojom::KeyringId::kBitcoin84);
       EXPECT_EQ(keyrings[last_pos++], mojom::KeyringId::kBitcoin84Testnet);
+      EXPECT_EQ(keyrings[last_pos++], mojom::KeyringId::kBitcoinImported);
+      EXPECT_EQ(keyrings[last_pos++],
+                mojom::KeyringId::kBitcoinImportedTestnet);
     }
 
     if (IsZCashEnabled()) {
@@ -192,13 +199,16 @@ TEST(CommonUtils, GetSupportedKeyringsForNetwork) {
 
   EXPECT_THAT(GetSupportedKeyringsForNetwork(mojom::CoinType::BTC,
                                              mojom::kBitcoinMainnet),
-              ElementsAreArray({mojom::KeyringId::kBitcoin84}));
+              ElementsAreArray({mojom::KeyringId::kBitcoin84,
+                                mojom::KeyringId::kBitcoinImported}));
   EXPECT_THAT(GetSupportedKeyringsForNetwork(mojom::CoinType::BTC,
                                              mojom::kBitcoinTestnet),
-              ElementsAreArray({mojom::KeyringId::kBitcoin84Testnet}));
+              ElementsAreArray({mojom::KeyringId::kBitcoin84Testnet,
+                                mojom::KeyringId::kBitcoinImportedTestnet}));
   EXPECT_THAT(GetSupportedKeyringsForNetwork(mojom::CoinType::BTC,
                                              "any non mainnet chain"),
-              ElementsAreArray({mojom::KeyringId::kBitcoin84Testnet}));
+              ElementsAreArray({mojom::KeyringId::kBitcoin84Testnet,
+                                mojom::KeyringId::kBitcoinImportedTestnet}));
 
   EXPECT_THAT(GetSupportedKeyringsForNetwork(mojom::CoinType::ZEC,
                                              mojom::kZCashMainnet),
@@ -221,7 +231,7 @@ TEST(CommonUtils, MakeAccountId) {
   EXPECT_EQ(id.keyring_id, mojom::KeyringId::kDefault);
   EXPECT_EQ(id.kind, mojom::AccountKind::kDerived);
   EXPECT_EQ(id.address, "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
-  EXPECT_EQ(id.bitcoin_account_index, 0u);
+  EXPECT_EQ(id.account_index, 0u);
 
   EXPECT_EQ(id.unique_key, "60_0_0_0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48");
 
@@ -283,105 +293,105 @@ TEST(CommonUtils, MakeAccountId) {
   EXPECT_TRUE(AllCoinsTested());
 }
 
-TEST(CommonUtils, MakeBitcoinAccountId) {
-  auto id =
-      *MakeBitcoinAccountId(mojom::CoinType::BTC, mojom::KeyringId::kBitcoin84,
-                            mojom::AccountKind::kDerived, 123);
+TEST(CommonUtils, MakeIndexBasedAccountId_BTC) {
+  auto id = *MakeIndexBasedAccountId(mojom::CoinType::BTC,
+                                     mojom::KeyringId::kBitcoin84,
+                                     mojom::AccountKind::kDerived, 123);
   EXPECT_EQ(id.coin, mojom::CoinType::BTC);
   EXPECT_EQ(id.keyring_id, mojom::KeyringId::kBitcoin84);
   EXPECT_EQ(id.kind, mojom::AccountKind::kDerived);
   EXPECT_EQ(id.address, "");
-  EXPECT_EQ(id.bitcoin_account_index, 123u);
+  EXPECT_EQ(id.account_index, 123u);
   EXPECT_EQ(id.unique_key, "0_4_0_123");
 
   // Same AccountId
-  EXPECT_EQ(id.unique_key, MakeBitcoinAccountId(id.coin, id.keyring_id, id.kind,
-                                                id.bitcoin_account_index)
+  EXPECT_EQ(id.unique_key, MakeIndexBasedAccountId(id.coin, id.keyring_id,
+                                                   id.kind, id.account_index)
                                ->unique_key);
 
   // Keyring differs
-  EXPECT_NE(id.unique_key,
-            MakeBitcoinAccountId(id.coin, mojom::KeyringId::kBitcoin84Testnet,
-                                 id.kind, id.bitcoin_account_index)
-                ->unique_key);
+  EXPECT_NE(id.unique_key, MakeIndexBasedAccountId(
+                               id.coin, mojom::KeyringId::kBitcoin84Testnet,
+                               id.kind, id.account_index)
+                               ->unique_key);
 
   // Index differs
-  EXPECT_NE(
-      id.unique_key,
-      MakeBitcoinAccountId(id.coin, id.keyring_id, id.kind, 321)->unique_key);
+  EXPECT_NE(id.unique_key,
+            MakeIndexBasedAccountId(id.coin, id.keyring_id, id.kind, 321)
+                ->unique_key);
 
-  EXPECT_TRUE(MakeBitcoinAccountId(mojom::CoinType::BTC,
-                                   mojom::KeyringId::kBitcoin84,
-                                   mojom::AccountKind::kDerived, 123));
+  EXPECT_TRUE(MakeIndexBasedAccountId(mojom::CoinType::BTC,
+                                      mojom::KeyringId::kBitcoin84,
+                                      mojom::AccountKind::kDerived, 123));
 
   // Coin differs
   for (const auto& coin : kAllCoins) {
-    if (coin == mojom::CoinType::BTC) {
+    if (coin == mojom::CoinType::BTC || coin == mojom::CoinType::ZEC) {
       continue;
     }
-    EXPECT_DCHECK_DEATH(MakeBitcoinAccountId(
+    EXPECT_DCHECK_DEATH(MakeIndexBasedAccountId(
         coin, mojom::KeyringId::kBitcoin84, mojom::AccountKind::kDerived, 123));
   }
 
   // Keyring differs
   for (const auto& keyring : kAllKeyrings) {
-    if (IsBitcoinKeyring(keyring)) {
+    if (IsBitcoinKeyring(keyring) || IsZCashKeyring(keyring)) {
       continue;
     }
-    EXPECT_DCHECK_DEATH(MakeBitcoinAccountId(
+    EXPECT_DCHECK_DEATH(MakeIndexBasedAccountId(
         mojom::CoinType::BTC, keyring, mojom::AccountKind::kDerived, 123));
   }
 
   // kImported is not a valid kind.
-  EXPECT_DCHECK_DEATH(MakeBitcoinAccountId(mojom::CoinType::BTC,
-                                           mojom::KeyringId::kBitcoin84,
-                                           mojom::AccountKind::kImported, 123));
+  EXPECT_TRUE(MakeIndexBasedAccountId(mojom::CoinType::BTC,
+                                      mojom::KeyringId::kBitcoin84,
+                                      mojom::AccountKind::kImported, 123));
   EXPECT_TRUE(AllCoinsTested());
 }
 
-TEST(CommonUtils, MakeZCashAccountId) {
-  auto id =
-      *MakeZCashAccountId(mojom::CoinType::ZEC, mojom::KeyringId::kZCashMainnet,
-                          mojom::AccountKind::kDerived, 123);
+TEST(CommonUtils, MakeIndexBasedAccountId_ZEC) {
+  auto id = *MakeIndexBasedAccountId(mojom::CoinType::ZEC,
+                                     mojom::KeyringId::kZCashMainnet,
+                                     mojom::AccountKind::kDerived, 123);
   EXPECT_EQ(id.coin, mojom::CoinType::ZEC);
   EXPECT_EQ(id.keyring_id, mojom::KeyringId::kZCashMainnet);
   EXPECT_EQ(id.kind, mojom::AccountKind::kDerived);
   EXPECT_EQ(id.address, "");
-  EXPECT_EQ(id.bitcoin_account_index, 123u);
+  EXPECT_EQ(id.account_index, 123u);
   EXPECT_EQ(id.unique_key, "133_6_0_123");
 
   // Keyring differs
   EXPECT_EQ("133_7_0_123",
-            MakeZCashAccountId(id.coin, mojom::KeyringId::kZCashTestnet,
-                               id.kind, id.bitcoin_account_index)
+            MakeIndexBasedAccountId(id.coin, mojom::KeyringId::kZCashTestnet,
+                                    id.kind, id.account_index)
                 ->unique_key);
 
   // Index differs
-  EXPECT_EQ(
-      "133_6_0_321",
-      MakeZCashAccountId(id.coin, id.keyring_id, id.kind, 321)->unique_key);
+  EXPECT_EQ("133_6_0_321",
+            MakeIndexBasedAccountId(id.coin, id.keyring_id, id.kind, 321)
+                ->unique_key);
 
   for (const auto& coin : kAllCoins) {
-    if (coin == mojom::CoinType::ZEC) {
+    if (coin == mojom::CoinType::BTC || coin == mojom::CoinType::ZEC) {
       continue;
     }
-    EXPECT_DCHECK_DEATH(MakeZCashAccountId(coin,
-                                           mojom::KeyringId::kZCashMainnet,
-                                           mojom::AccountKind::kDerived, 123));
+    EXPECT_DCHECK_DEATH(
+        MakeIndexBasedAccountId(coin, mojom::KeyringId::kZCashMainnet,
+                                mojom::AccountKind::kDerived, 123));
   }
 
   for (const auto& keyring : kAllKeyrings) {
-    if (IsZCashKeyring(keyring)) {
+    if (IsBitcoinKeyring(keyring) || IsZCashKeyring(keyring)) {
       continue;
     }
-    EXPECT_DCHECK_DEATH(MakeZCashAccountId(mojom::CoinType::ZEC, keyring,
-                                           mojom::AccountKind::kDerived, 123));
+    EXPECT_DCHECK_DEATH(MakeIndexBasedAccountId(
+        mojom::CoinType::ZEC, keyring, mojom::AccountKind::kDerived, 123));
   }
 
   // Imported not supported for Zcash
-  EXPECT_DCHECK_DEATH(MakeZCashAccountId(mojom::CoinType::ZEC,
-                                         mojom::KeyringId::kZCashMainnet,
-                                         mojom::AccountKind::kImported, 123));
+  EXPECT_DCHECK_DEATH(MakeIndexBasedAccountId(
+      mojom::CoinType::ZEC, mojom::KeyringId::kZCashMainnet,
+      mojom::AccountKind::kImported, 123));
 
   EXPECT_TRUE(AllCoinsTested());
 }
@@ -412,11 +422,11 @@ TEST(CommonUtils, GetNetworkForBitcoinKeyring) {
 
 TEST(CommonUtils, GetNetworkForBitcoinAccount) {
   EXPECT_EQ(mojom::kBitcoinMainnet,
-            GetNetworkForBitcoinAccount(MakeBitcoinAccountId(
+            GetNetworkForBitcoinAccount(MakeIndexBasedAccountId(
                 mojom::CoinType::BTC, mojom::KeyringId::kBitcoin84,
                 mojom::AccountKind::kDerived, 123)));
   EXPECT_EQ(mojom::kBitcoinTestnet,
-            GetNetworkForBitcoinAccount(MakeBitcoinAccountId(
+            GetNetworkForBitcoinAccount(MakeIndexBasedAccountId(
                 mojom::CoinType::BTC, mojom::KeyringId::kBitcoin84Testnet,
                 mojom::AccountKind::kDerived, 123)));
 }

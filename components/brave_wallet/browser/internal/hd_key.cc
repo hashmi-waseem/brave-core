@@ -421,9 +421,9 @@ std::string HDKey::GetPublicExtendedKey(
   return Serialize(version, public_key_);
 }
 
-std::string HDKey::GetSegwitAddress(bool testnet) const {
-  return PubkeyToSegwitAddress(public_key_, testnet);
-}
+// std::string HDKey::GetSegwitAddress(bool testnet) const {
+//   return PubkeyToSegwitAddress(public_key_, testnet);
+// }
 
 std::vector<uint8_t> HDKey::GetUncompressedPublicKey() const {
   // uncompressed

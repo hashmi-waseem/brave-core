@@ -58,7 +58,7 @@ class HDKey {
   std::vector<uint8_t> GetPublicKeyBytes() const;
   std::string GetPublicExtendedKey(
       ExtendedKeyVersion version = ExtendedKeyVersion::kXpub) const;
-  std::string GetSegwitAddress(bool testnet) const;
+  //  std::string GetSegwitAddress(bool testnet) const;
   std::string GetZCashTransparentAddress(bool testnet) const;
   std::vector<uint8_t> GetUncompressedPublicKey() const;
   std::vector<uint8_t> GetPublicKeyFromX25519_XSalsa20_Poly1305() const;

@@ -86,7 +86,7 @@ import XCTest
       keyringId: BraveWallet.KeyringId.default,
       kind: .derived,
       address: "mock_eth_id_2",
-      bitcoinAccountIndex: 0,
+      accountIndex: 0,
       uniqueKey: "mock_eth_id_2"
     ),
     address: "mock_eth_id_2",

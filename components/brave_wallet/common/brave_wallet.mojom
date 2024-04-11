@@ -830,6 +830,8 @@ enum KeyringId {
   kBitcoin84Testnet = 5,
   kZCashMainnet = 6,
   kZCashTestnet = 7,
+  kBitcoinImported = 8,
+  kBitcoinImportedTestnet = 9,
 };
 
 const string kP3ACountTestNetworksSwitch = "p3a-count-wallet-test-networks";
@@ -870,7 +872,8 @@ struct AccountId {
   AccountKind kind;
   // TODO(apaymyshev): should be an index within keyring.
   string address;
-  uint32 bitcoin_account_index;
+  // Account index for index-based keyrings (BTC and ZEC).
+  uint32 account_index;
 
   // Two `AccountIds` equal iff their `unique_key` fields equal. Use this to
   // check AccountIds for equality or to store as string keys. Persist with
@@ -1069,6 +1072,10 @@ interface KeyringService {
 
   // Imports a filecoin account with a specific private key and network
   ImportFilecoinAccount(string accountName, string privateKey, string network)
+      => (AccountInfo? account);
+
+  // Imports a bitcoin account
+  ImportBitcoinAccount(string accountName, string payload, KeyringId keyring_id)
       => (AccountInfo? account);
 
   // Imports an account via JSON

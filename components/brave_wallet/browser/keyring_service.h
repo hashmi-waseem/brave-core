@@ -15,6 +15,8 @@
 #include "base/gtest_prod_util.h"
 #include "base/memory/raw_ptr.h"
 #include "base/values.h"
+#include "brave/components/brave_wallet/browser/bitcoin/bitcoin_imported_keyring.h"
+#include "brave/components/brave_wallet/browser/ethereum_keyring.h"
 #include "brave/components/brave_wallet/browser/hd_keyring.h"
 #include "brave/components/brave_wallet/browser/password_encryptor.h"
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
@@ -40,6 +42,7 @@ class FilTransaction;
 class KeyringServiceUnitTest;
 class EthereumProviderImplUnitTest;
 class SolanaProviderImplUnitTest;
+class SolanaKeyring;
 class FilecoinKeyring;
 class JsonRpcService;
 class AssetDiscoveryManagerUnitTest;
@@ -116,6 +119,10 @@ class KeyringService : public KeyedService, public mojom::KeyringService {
                              const std::string& private_key,
                              const std::string& network,
                              ImportFilecoinAccountCallback callback) override;
+  void ImportBitcoinAccount(const std::string& account_name,
+                            const std::string& payload,
+                            mojom::KeyringId keyring_id,
+                            ImportBitcoinAccountCallback callback) override;
   void AddHardwareAccounts(std::vector<mojom::HardwareWalletAccountPtr> info,
                            AddHardwareAccountsCallback callback) override;
   std::vector<mojom::AccountInfoPtr> AddHardwareAccountsSync(
@@ -307,8 +314,8 @@ class KeyringService : public KeyedService, public mojom::KeyringService {
   friend class SolanaTransactionUnitTest;
 
   void ResetAllAccountInfosCache();
-  mojom::AccountInfoPtr AddAccountForKeyring(mojom::KeyringId keyring_id,
-                                             const std::string& account_name);
+  mojom::AccountInfoPtr AddHDAccountForKeyring(mojom::KeyringId keyring_id,
+                                               const std::string& account_name);
   bool RemoveImportedAccountInternal(const mojom::AccountId& account_id);
   bool RemoveHardwareAccountInternal(const mojom::AccountId& account_id);
   bool SetKeyringDerivedAccountNameInternal(const mojom::AccountId& account_id,
@@ -320,11 +327,15 @@ class KeyringService : public KeyedService, public mojom::KeyringService {
 
   void OnAutoLockFired();
   HDKeyring* GetHDKeyringById(mojom::KeyringId keyring_id) const;
+  EthereumKeyring* GetEthereumKeyring() const;
+  SolanaKeyring* GetSolanaKeyring() const;
+  FilecoinKeyring* GetFilecoinKeyring(mojom::KeyringId keyring_id) const;
+  BitcoinImportedKeyring* GetBitcoinImportKeyring(
+      mojom::KeyringId keyring_id) const;
   BitcoinKeyring* GetBitcoinKeyringById(mojom::KeyringId keyring_id) const;
   ZCashKeyring* GetZCashKeyringById(mojom::KeyringId keyring_id) const;
   std::vector<mojom::AccountInfoPtr> GetHardwareAccountsSync(
       mojom::KeyringId keyring_id) const;
-  // Address will be returned when success
   mojom::AccountInfoPtr ImportAccountForKeyring(
       mojom::CoinType coin,
       mojom::KeyringId keyring_id,
@@ -380,6 +391,8 @@ class KeyringService : public KeyedService, public mojom::KeyringService {
   std::unique_ptr<base::OneShotTimer> auto_lock_timer_;
   std::unique_ptr<PrefChangeRegistrar> pref_change_registrar_;
   base::flat_map<mojom::KeyringId, std::unique_ptr<HDKeyring>> keyrings_;
+  base::flat_map<mojom::KeyringId, std::unique_ptr<BitcoinImportedKeyring>>
+      bitcoin_import_keyrings_;
   std::unique_ptr<PasswordEncryptor> encryptor_;
 
   raw_ptr<JsonRpcService> json_rpc_service_;

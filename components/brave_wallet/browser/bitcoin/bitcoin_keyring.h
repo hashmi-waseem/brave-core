@@ -35,6 +35,13 @@ class BitcoinKeyring : public Secp256k1HDKeyring {
       const mojom::BitcoinKeyId& key_id,
       base::span<const uint8_t, 32> message);
 
+  std::string ImportAccount(const std::vector<uint8_t>& private_key) override;
+  bool RemoveImportedAccount(const std::string& address) override;
+
+  std::string GetDiscoveryAddress(size_t index) const override;
+
+  std::vector<std::string> GetImportedAccountsForTesting() const override;
+
   std::string EncodePrivateKeyForExport(const std::string& address) override;
 
  private:
