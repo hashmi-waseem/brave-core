@@ -69,18 +69,11 @@ class EngineConsumer {
 
   virtual void ClearAllQueries() = 0;
 
-  void SetAPIForTesting(
-      std::unique_ptr<RemoteCompletionClient> api_for_testing) {
-    api_ = std::move(api_for_testing);
-  }
-  RemoteCompletionClient* GetAPIForTesting() { return api_.get(); }
-
   void SetMaxPageContentLengthForTesting(int max_page_content_length) {
     max_page_content_length_ = max_page_content_length;
   }
 
  protected:
-  std::unique_ptr<RemoteCompletionClient> api_ = nullptr;
   int max_page_content_length_ = 0;
 };
 

@@ -24,6 +24,7 @@
 #include "brave/components/ai_chat/core/browser/ai_chat_metrics.h"
 #include "brave/components/ai_chat/core/browser/engine/engine_consumer.h"
 #include "brave/components/ai_chat/core/browser/engine/engine_consumer_claude.h"
+#include "brave/components/ai_chat/core/browser/engine/engine_consumer_conversation_api.h"
 #include "brave/components/ai_chat/core/browser/engine/engine_consumer_llama.h"
 #include "brave/components/ai_chat/core/browser/models.h"
 #include "brave/components/ai_chat/core/browser/utils.h"
@@ -284,12 +285,16 @@ void ConversationDriver::InitEngine() {
   model_key_ = model->key;
 
   // Engine enum on model to decide which one
-  if (model->engine_type == mojom::ModelEngineType::LLAMA_REMOTE) {
-    VLOG(1) << "Started AI engine: llama";
+  if (features::kConversationAPIEnabled.Get()) {
+    DVLOG(1) << "Started AI engine: conversation api";
+    engine_ = std::make_unique<EngineConsumerConversationAPI>(
+        *model, url_loader_factory_, credential_manager_.get());
+  } else if (model->engine_type == mojom::ModelEngineType::LLAMA_REMOTE) {
+    DVLOG(1) << "Started AI engine: llama";
     engine_ = std::make_unique<EngineConsumerLlamaRemote>(
         *model, url_loader_factory_, credential_manager_.get());
   } else {
-    VLOG(1) << "Started AI engine: claude";
+    DVLOG(1) << "Started AI engine: claude";
     engine_ = std::make_unique<EngineConsumerClaudeRemote>(
         *model, url_loader_factory_, credential_manager_.get());
   }

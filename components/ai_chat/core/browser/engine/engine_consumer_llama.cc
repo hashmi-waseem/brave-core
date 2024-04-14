@@ -24,6 +24,7 @@
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "base/time/time.h"
+#include "brave/components/ai_chat/core/browser/engine/engine_consumer_claude.h"
 #include "brave/components/ai_chat/core/browser/engine/remote_completion_client.h"
 #include "brave/components/ai_chat/core/common/features.h"
 #include "brave/components/ai_chat/core/common/mojom/ai_chat.mojom.h"
@@ -317,23 +318,17 @@ namespace ai_chat {
 EngineConsumerLlamaRemote::EngineConsumerLlamaRemote(
     const mojom::Model& model,
     scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory,
-    AIChatCredentialManager* credential_manager) {
-  DCHECK(!model.name.empty());
+    AIChatCredentialManager* credential_manager)
+    : EngineConsumerClaudeRemote(model,
+                                 url_loader_factory,
+                                 credential_manager) {
   base::flat_set<std::string_view> stop_sequences(kStopSequences.begin(),
                                                   kStopSequences.end());
-  api_ = std::make_unique<RemoteCompletionClient>(
-      model.name, stop_sequences, url_loader_factory, credential_manager);
 
   is_mixtral_ = base::StartsWith(model.name, "mixtral");
-
-  max_page_content_length_ = model.max_page_content_length;
 }
 
 EngineConsumerLlamaRemote::~EngineConsumerLlamaRemote() = default;
-
-void EngineConsumerLlamaRemote::ClearAllQueries() {
-  api_->ClearAllQueries();
-}
 
 void EngineConsumerLlamaRemote::GenerateRewriteSuggestion(
     std::string text,

@@ -20,10 +20,14 @@ static_library("browser") {
     "constants.h",
     "conversation_driver.cc",
     "conversation_driver.h",
+    "engine/conversation_api_client.cc",
+    "engine/conversation_api_client.h",
     "engine/engine_consumer.cc",
     "engine/engine_consumer.h",
     "engine/engine_consumer_claude.cc",
     "engine/engine_consumer_claude.h",
+    "engine/engine_consumer_conversation_api.cc",
+    "engine/engine_consumer_conversation_api.h",
     "engine/engine_consumer_llama.cc",
     "engine/engine_consumer_llama.h",
     "engine/remote_completion_client.cc",
@@ -83,6 +87,7 @@ if (!is_ios) {
       "ai_chat_metrics_unittest.cc",
       "conversation_driver_unittest.cc",
       "engine/engine_consumer_claude_unittest.cc",
+      "engine/engine_consumer_conversation_api_unittest.cc",
       "engine/engine_consumer_llama_unittest.cc",
     ]
 

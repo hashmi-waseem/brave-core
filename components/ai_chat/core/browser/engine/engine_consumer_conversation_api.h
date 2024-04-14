@@ -1,22 +1,19 @@
-// Copyright (c) 2023 The Brave Authors. All rights reserved.
+// Copyright (c) 2024 The Brave Authors. All rights reserved.
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this file,
 // You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#ifndef BRAVE_COMPONENTS_AI_CHAT_CORE_BROWSER_ENGINE_ENGINE_CONSUMER_CLAUDE_H_
-#define BRAVE_COMPONENTS_AI_CHAT_CORE_BROWSER_ENGINE_ENGINE_CONSUMER_CLAUDE_H_
+#ifndef BRAVE_COMPONENTS_AI_CHAT_CORE_BROWSER_ENGINE_ENGINE_CONSUMER_CONVERSATION_API_H_
+#define BRAVE_COMPONENTS_AI_CHAT_CORE_BROWSER_ENGINE_ENGINE_CONSUMER_CONVERSATION_API_H_
 
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 
-#include "brave/components/ai_chat/core/browser/ai_chat_credential_manager.h"
+#include "brave/components/ai_chat/core/browser/engine/conversation_api_client.h"
 #include "brave/components/ai_chat/core/browser/engine/engine_consumer.h"
-#include "brave/components/ai_chat/core/common/mojom/ai_chat.mojom-forward.h"
-
-namespace api_request_helper {
-class APIRequestResult;
-}  // namespace api_request_helper
+#include "brave/components/ai_chat/core/common/mojom/ai_chat.mojom.h"
 
 namespace network {
 class SharedURLLoaderFactory;
@@ -24,20 +21,22 @@ class SharedURLLoaderFactory;
 
 namespace ai_chat {
 
-using api_request_helper::APIRequestResult;
+class AIChatCredentialManager;
 
-// An AI Chat engine consumer that uses the Claude-style remote HTTP completion
-// API and builds prompts tailored to the Claude models.
-class EngineConsumerClaudeRemote : public EngineConsumer {
+// An AI Chat engine consumer that uses the remote HTTP Brave Conversation API.
+// Converts between AI Chat's Conversation actions and data model
+// (history, associated content, suggested questions, etc.) and the Conversation
+// API's request/response format.
+class EngineConsumerConversationAPI : public EngineConsumer {
  public:
-  explicit EngineConsumerClaudeRemote(
+  explicit EngineConsumerConversationAPI(
       const mojom::Model& model,
       scoped_refptr<network::SharedURLLoaderFactory> url_loader_factory,
       AIChatCredentialManager* credential_manager);
-  EngineConsumerClaudeRemote(const EngineConsumerClaudeRemote&) = delete;
-  EngineConsumerClaudeRemote& operator=(const EngineConsumerClaudeRemote&) =
-      delete;
-  ~EngineConsumerClaudeRemote() override;
+  EngineConsumerConversationAPI(const EngineConsumerConversationAPI&) = delete;
+  EngineConsumerConversationAPI& operator=(
+      const EngineConsumerConversationAPI&) = delete;
+  ~EngineConsumerConversationAPI() override;
 
   // EngineConsumer
   void GenerateQuestionSuggestions(
@@ -61,22 +60,20 @@ class EngineConsumerClaudeRemote : public EngineConsumer {
   void ClearAllQueries() override;
 
   void SetAPIForTesting(
-      std::unique_ptr<RemoteCompletionClient> api_for_testing) {
+      std::unique_ptr<ConversationAPIClient> api_for_testing) {
     api_ = std::move(api_for_testing);
   }
-  RemoteCompletionClient* GetAPIForTesting() { return api_.get(); }
-
- protected:
-  std::unique_ptr<RemoteCompletionClient> api_ = nullptr;
+  ConversationAPIClient* GetAPIForTesting() { return api_.get(); }
 
  private:
   void OnGenerateQuestionSuggestionsResponse(
       SuggestedQuestionsCallback callback,
       GenerationResult result);
 
-  base::WeakPtrFactory<EngineConsumerClaudeRemote> weak_ptr_factory_{this};
+  std::unique_ptr<ConversationAPIClient> api_ = nullptr;
+  base::WeakPtrFactory<EngineConsumerConversationAPI> weak_ptr_factory_{this};
 };
 
 }  // namespace ai_chat
 
-#endif  // BRAVE_COMPONENTS_AI_CHAT_CORE_BROWSER_ENGINE_ENGINE_CONSUMER_CLAUDE_H_
+#endif  // BRAVE_COMPONENTS_AI_CHAT_CORE_BROWSER_ENGINE_ENGINE_CONSUMER_CONVERSATION_API_H_
