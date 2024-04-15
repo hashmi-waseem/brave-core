@@ -36,7 +36,12 @@ import { PanelActionHeader } from '../../../components/desktop/card-headers/pane
 import { LeoSquaredButton } from '../../../components/shared/style'
 import { ReviewButtonRow } from '../composer_ui/shared_composer.style'
 
-export const Swap = () => {
+interface Props {
+  isIOS?: boolean
+}
+
+export const Swap = React.memo((props: Props) => {
+  const { isIOS = false } = props
   // Hooks
   const swap = useSwap()
   const {
@@ -116,7 +121,8 @@ export const Swap = () => {
         noCardPadding={true}
         noMinCardHeight={true}
         hideDivider={true}
-        hideNav={isPanel}
+        hideNav={isPanel || isIOS}
+        hideHeader={isIOS}
         cardHeader={
           isPanel ? (
             <PanelActionHeader
@@ -246,4 +252,4 @@ export const Swap = () => {
       )}
     </>
   )
-}
+})
