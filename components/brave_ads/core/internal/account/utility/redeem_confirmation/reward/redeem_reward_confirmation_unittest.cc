@@ -31,6 +31,12 @@ namespace brave_ads {
 
 class BraveAdsRedeemRewardConfirmationTest : public UnitTestBase {
  protected:
+  void RunPendingFetchPaymentTokenTask() {
+    FastForwardClockToNextPendingTask();
+  }
+
+  bool HasPendingFetchPaymentTokenTask() const { return HasPendingTasks(); }
+
   TokenGeneratorMock token_generator_mock_;
 
   RedeemConfirmationDelegateMock delegate_mock_;
@@ -67,6 +73,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest, Redeem) {
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest, RetryRedeemingIfNoIssuers) {
@@ -89,6 +97,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest, RetryRedeemingIfNoIssuers) {
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  EXPECT_FALSE(HasPendingFetchPaymentTokenTask());
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -117,6 +127,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -151,6 +163,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -186,6 +200,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -220,6 +236,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -255,6 +273,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -289,6 +309,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -336,6 +358,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -384,6 +408,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -425,6 +451,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -472,6 +500,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -520,6 +550,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -567,6 +599,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -614,6 +648,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -662,6 +698,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -707,6 +745,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -752,6 +792,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 TEST_F(BraveAdsRedeemRewardConfirmationTest,
@@ -800,6 +842,8 @@ TEST_F(BraveAdsRedeemRewardConfirmationTest,
 
   RedeemRewardConfirmation::CreateAndRedeem(
       confirmation_delegate_weak_factory_.GetWeakPtr(), *confirmation);
+
+  RunPendingFetchPaymentTokenTask();
 }
 
 }  // namespace brave_ads
