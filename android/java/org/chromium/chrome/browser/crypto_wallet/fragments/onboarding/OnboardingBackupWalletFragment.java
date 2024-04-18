@@ -78,57 +78,65 @@ public class OnboardingBackupWalletFragment extends BaseOnboardingWalletFragment
         mBackupWalletCheckbox = view.findViewById(R.id.backup_wallet_checkbox);
 
         mBackupWalletPassword.addTextChangedListener(new FilterTextWatcherPassword());
-        mBackupWalletButton.setOnClickListener(v -> {
-            BraveWalletP3a braveWalletP3A = getBraveWalletP3A();
-            if (mIsOnboarding) {
-                if (mOnNextPage != null) {
-                    mOnNextPage.gotoNextPage();
-                }
-                if (braveWalletP3A != null) {
-                    braveWalletP3A.reportOnboardingAction(OnboardingAction.RECOVERY_SETUP);
-                }
-                return;
-            }
-            KeyringService keyringService = getKeyringService();
-            if (keyringService != null) {
-                final String passwordToUse = mPasswordFromBiometric.isEmpty()
-                        ? mBackupWalletPassword.getText().toString()
-                        : mPasswordFromBiometric;
-                keyringService.getMnemonicForDefaultKeyring(passwordToUse, result -> {
-                    if (!result.isEmpty()) {
-                        mOnboardingViewModel.setPassword(passwordToUse);
+        mBackupWalletButton.setOnClickListener(
+                v -> {
+                    BraveWalletP3a braveWalletP3A = getBraveWalletP3A();
+                    if (mIsOnboarding) {
                         if (mOnNextPage != null) {
                             mOnNextPage.gotoNextPage();
                         }
-                    } else {
-                        showPasswordRelatedControls(true);
-                        mBackupWalletPassword.setError(
-                                getString(R.string.incorrect_password_error));
+                        if (braveWalletP3A != null) {
+                            braveWalletP3A.reportOnboardingAction(OnboardingAction.RECOVERY_SETUP);
+                        }
+                        return;
+                    }
+                    KeyringService keyringService = getKeyringService();
+                    if (keyringService != null) {
+                        final String passwordToUse =
+                                mPasswordFromBiometric.isEmpty()
+                                        ? mBackupWalletPassword.getText().toString()
+                                        : mPasswordFromBiometric;
+                        keyringService.getWalletMnemonic(
+                                passwordToUse,
+                                result -> {
+                                    if (!result.isEmpty()) {
+                                        mOnboardingViewModel.setPassword(passwordToUse);
+                                        if (mOnNextPage != null) {
+                                            mOnNextPage.gotoNextPage();
+                                        }
+                                    } else {
+                                        showPasswordRelatedControls(true);
+                                        mBackupWalletPassword.setError(
+                                                getString(R.string.incorrect_password_error));
+                                    }
+                                });
                     }
                 });
-            }
-        });
-        mBackupWalletCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (!mIsOnboarding && !mBiometricExecuted
-                    && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-                    && Utils.isBiometricAvailable(getContext())
-                    && KeystoreHelper.shouldUseBiometricOnUnlock()) {
-                createBiometricPrompt();
+        mBackupWalletCheckbox.setOnCheckedChangeListener(
+                (buttonView, isChecked) -> {
+                    if (!mIsOnboarding
+                            && !mBiometricExecuted
+                            && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+                            && Utils.isBiometricAvailable(getContext())
+                            && KeystoreHelper.shouldUseBiometricOnUnlock()) {
+                        createBiometricPrompt();
 
-                return;
-            }
-            enableDisableContinueButton(isChecked);
-        });
+                        return;
+                    }
+                    enableDisableContinueButton(isChecked);
+                });
         TextView backupWalletSkipButton = view.findViewById(R.id.btn_backup_wallet_skip);
-        backupWalletSkipButton.setOnClickListener(v -> {
-            BraveWalletP3a braveWalletP3A = getBraveWalletP3A();
-            if (braveWalletP3A != null && mIsOnboarding) {
-                braveWalletP3A.reportOnboardingAction(OnboardingAction.COMPLETE_RECOVERY_SKIPPED);
-            }
-            if (mOnNextPage != null) {
-                mOnNextPage.onboardingCompleted();
-            }
-        });
+        backupWalletSkipButton.setOnClickListener(
+                v -> {
+                    BraveWalletP3a braveWalletP3A = getBraveWalletP3A();
+                    if (braveWalletP3A != null && mIsOnboarding) {
+                        braveWalletP3A.reportOnboardingAction(
+                                OnboardingAction.COMPLETE_RECOVERY_SKIPPED);
+                    }
+                    if (mOnNextPage != null) {
+                        mOnNextPage.onboardingCompleted();
+                    }
+                });
         mBiometricBackupWalletImage.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
                     && Utils.isBiometricAvailable(getContext())) {

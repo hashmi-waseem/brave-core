@@ -185,7 +185,7 @@ struct RestoreWalletView: View {
             keyringStore.restoreWallet(
               words: recoveryWords,
               password: newPassword,
-              isLegacyBraveWallet: isLegacyWallet
+              isLegacyEthSeedFormat: isLegacyWallet
             ) { isMnemonicValid in
               if isMnemonicValid {
                 isShowingPhraseError = false
@@ -271,7 +271,7 @@ struct RestoreWalletView: View {
     keyringStore.restoreWallet(
       words: recoveryWords,
       password: password,
-      isLegacyBraveWallet: recoveryWords.count == .legacyWalletRecoveryPhraseNumber
+      isLegacyEthSeedFormat: recoveryWords.count == .legacyWalletRecoveryPhraseNumber
     ) { success in
       if success {
         isShowingPhraseError = false
