@@ -1,0 +1,13 @@
+diff --git a/build/config/unsafe_buffers_paths.txt b/build/config/unsafe_buffers_paths.txt
+index b7319dcb74bea5e91aa63b189e5e645d9e6d1f04..b432500cb10b835d011284aab08f60a3a60dddf5 100644
+--- a/build/config/unsafe_buffers_paths.txt
++++ b/build/config/unsafe_buffers_paths.txt
+@@ -55,6 +55,8 @@
+ +base/unsafe_buffers_unittest.cc
+ +base/unsafe_buffers_nocompile.nc
+ 
++-brave/
++-src/
+ -build/
+ -build_overrides/
+ -buildtools/
