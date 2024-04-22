@@ -39,6 +39,10 @@ inline constexpr char kEnabledForLastProfile[] =
 inline constexpr char kEverEnabledForAnyProfile[] =
     "brave.brave_ads.ever_enabled_any_profile";
 
+// Stores whether user has opted-in to search ads
+inline constexpr char kOptedInToSearchResultAds[] =
+    "brave.brave_ads.search_result_ads_enabled";
+
 // Stores a diagnostic id
 inline constexpr char kDiagnosticId[] = "brave.brave_ads.diagnostics.id";
 

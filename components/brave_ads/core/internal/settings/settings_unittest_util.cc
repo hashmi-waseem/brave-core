@@ -34,6 +34,10 @@ void OptOutOfNotificationAds() {
   SetProfileBooleanPrefValue(prefs::kOptedInToNotificationAds, false);
 }
 
+void OptOutOfSearchResultAds() {
+  SetProfileBooleanPrefValue(prefs::kOptedInToSearchResultAds, false);
+}
+
 void SetMaximumNotificationAdsPerHour(const int max_ads_per_hour) {
   SetProfileInt64PrefValue(prefs::kMaximumNotificationAdsPerHour,
                            max_ads_per_hour);

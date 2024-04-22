@@ -36,6 +36,10 @@ bool UserHasOptedInToNotificationAds() {
          GetProfileBooleanPref(prefs::kOptedInToNotificationAds);
 }
 
+bool UserHasOptedInToSearchResultAds() {
+  return GetProfileBooleanPref(prefs::kOptedInToSearchResultAds);
+}
+
 int GetMaximumNotificationAdsPerHour() {
   const int ads_per_hour = static_cast<int>(
       GetProfileInt64Pref(prefs::kMaximumNotificationAdsPerHour));

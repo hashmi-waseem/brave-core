@@ -80,6 +80,7 @@ source_set("unit_tests") {
     "//brave/browser/net:geolocation",
     "//brave/components/brave_ads/browser",
     "//brave/components/brave_ads/browser:test_support",
+    "//brave/components/brave_ads/core/public:headers",
     "//brave/components/brave_component_updater/browser",
     "//brave/components/brave_rewards/common",
     "//brave/components/brave_rewards/common:features",

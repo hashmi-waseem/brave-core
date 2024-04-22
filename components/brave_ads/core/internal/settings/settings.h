@@ -15,6 +15,9 @@ bool UserHasOptedInToBraveNewsAds();
 bool UserHasOptedInToNewTabPageAds();
 
 bool UserHasOptedInToNotificationAds();
+
+bool UserHasOptedInToSearchResultAds();
+
 int GetMaximumNotificationAdsPerHour();
 
 }  // namespace brave_ads

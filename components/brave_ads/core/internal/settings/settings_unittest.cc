@@ -57,6 +57,19 @@ TEST_F(BraveAdsSettingsTest, UserHasNotOptedInToNewTabPageAds) {
   EXPECT_FALSE(UserHasOptedInToNewTabPageAds());
 }
 
+TEST_F(BraveAdsSettingsTest, UserHasOptedInToSearchResultAds) {
+  // Act & Assert
+  EXPECT_TRUE(UserHasOptedInToSearchResultAds());
+}
+
+TEST_F(BraveAdsSettingsTest, UserHasNotOptedInToSearchResultAds) {
+  // Arrange
+  test::OptOutOfSearchResultAds();
+
+  // Act & Assert
+  EXPECT_FALSE(UserHasOptedInToSearchResultAds());
+}
+
 TEST_F(BraveAdsSettingsTest, UserHasOptedInToNotificationAds) {
   // Act & Assert
   EXPECT_TRUE(UserHasOptedInToNotificationAds());

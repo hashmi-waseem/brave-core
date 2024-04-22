@@ -16,8 +16,8 @@ class HttpRequestHeaders;
 
 namespace brave {
 
-inline constexpr char kAdsStatusHeader[] = "X-Brave-Ads-Enabled";
-inline constexpr char kAdsEnabledStatusValue[] = "1";
+inline constexpr char kSearchAdsEnabledHeader[] = "Brave-Search-Ads-Enabled";
+inline constexpr char kSearchAdsDisabledValue[] = "?0";
 
 int OnBeforeStartTransaction_AdsStatusHeader(
     net::HttpRequestHeaders* headers,

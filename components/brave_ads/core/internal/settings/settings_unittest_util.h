@@ -15,6 +15,9 @@ void OptOutOfBraveNewsAds();
 void OptOutOfNewTabPageAds();
 
 void OptOutOfNotificationAds();
+
+void OptOutOfSearchResultAds();
+
 void SetMaximumNotificationAdsPerHour(int max_ads_per_hour);
 
 }  // namespace brave_ads::test

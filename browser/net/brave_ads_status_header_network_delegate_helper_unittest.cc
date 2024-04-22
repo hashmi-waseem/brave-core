@@ -10,6 +10,8 @@
 #include "base/test/scoped_feature_list.h"
 #include "brave/browser/net/brave_ads_status_header_network_delegate_helper.h"
 #include "brave/browser/net/url_context.h"
+#include "brave/components/brave_ads/core/public/prefs/pref_names.h"
+#include "brave/components/brave_ads/core/public/prefs/pref_registry.h"
 #include "brave/components/brave_rewards/common/pref_names.h"
 #include "brave/components/brave_rewards/common/pref_registry.h"
 #include "brave/components/l10n/common/test/scoped_default_locale.h"
@@ -60,6 +62,7 @@ class AdsStatusHeaderDelegateHelperTest : public testing::Test {
     auto prefs =
         std::make_unique<sync_preferences::TestingPrefServiceSyncable>();
     brave_rewards::RegisterProfilePrefs(prefs->registry());
+    brave_ads::RegisterProfilePrefs(prefs->registry());
     RegisterUserProfilePrefs(prefs->registry());
     builder.SetPrefService(std::move(prefs));
     profile_ = builder.Build();
@@ -73,6 +76,8 @@ class AdsStatusHeaderDelegateHelperTest : public testing::Test {
 
 TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchTabAdsEnabled) {
   profile_->GetPrefs()->SetBoolean(brave_rewards::prefs::kEnabled, true);
+  profile_->GetPrefs()->SetBoolean(brave_ads::prefs::kOptedInToSearchResultAds,
+                                   false);
 
   auto request_info = std::make_shared<brave::BraveRequestInfo>();
   request_info->browser_context = profile_.get();
@@ -88,8 +93,9 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchTabAdsEnabled) {
     EXPECT_EQ(result_code, net::OK);
 
     std::string ads_status_header;
-    EXPECT_TRUE(headers.GetHeader(brave::kAdsStatusHeader, &ads_status_header));
-    EXPECT_EQ(ads_status_header, brave::kAdsEnabledStatusValue);
+    EXPECT_TRUE(
+        headers.GetHeader(brave::kSearchAdsEnabledHeader, &ads_status_header));
+    EXPECT_EQ(ads_status_header, brave::kSearchAdsDisabledValue);
   }
 
   {
@@ -102,8 +108,9 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchTabAdsEnabled) {
     EXPECT_EQ(result_code, net::OK);
 
     std::string ads_status_header;
-    EXPECT_TRUE(headers.GetHeader(brave::kAdsStatusHeader, &ads_status_header));
-    EXPECT_EQ(ads_status_header, brave::kAdsEnabledStatusValue);
+    EXPECT_TRUE(
+        headers.GetHeader(brave::kSearchAdsEnabledHeader, &ads_status_header));
+    EXPECT_EQ(ads_status_header, brave::kSearchAdsDisabledValue);
   }
 
   {
@@ -116,8 +123,9 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchTabAdsEnabled) {
     EXPECT_EQ(result_code, net::OK);
 
     std::string ads_status_header;
-    EXPECT_TRUE(headers.GetHeader(brave::kAdsStatusHeader, &ads_status_header));
-    EXPECT_EQ(ads_status_header, brave::kAdsEnabledStatusValue);
+    EXPECT_TRUE(
+        headers.GetHeader(brave::kSearchAdsEnabledHeader, &ads_status_header));
+    EXPECT_EQ(ads_status_header, brave::kSearchAdsDisabledValue);
   }
 
   {
@@ -132,13 +140,16 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchTabAdsEnabled) {
     EXPECT_EQ(result_code, net::OK);
 
     std::string ads_status_header;
-    EXPECT_TRUE(headers.GetHeader(brave::kAdsStatusHeader, &ads_status_header));
-    EXPECT_EQ(ads_status_header, brave::kAdsEnabledStatusValue);
+    EXPECT_TRUE(
+        headers.GetHeader(brave::kSearchAdsEnabledHeader, &ads_status_header));
+    EXPECT_EQ(ads_status_header, brave::kSearchAdsDisabledValue);
   }
 }
 
 TEST_F(AdsStatusHeaderDelegateHelperTest, NonBraveSearchTabAdsEnabled) {
   profile_->GetPrefs()->SetBoolean(brave_rewards::prefs::kEnabled, true);
+  profile_->GetPrefs()->SetBoolean(brave_ads::prefs::kOptedInToSearchResultAds,
+                                   false);
 
   auto request_info =
       std::make_shared<brave::BraveRequestInfo>(GURL(kBraveSearchRequestUrl));
@@ -154,7 +165,7 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, NonBraveSearchTabAdsEnabled) {
         &headers, brave::ResponseCallback(), request_info);
     EXPECT_EQ(result_code, net::OK);
 
-    EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+    EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
   }
 
   {
@@ -166,12 +177,14 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, NonBraveSearchTabAdsEnabled) {
         &headers, brave::ResponseCallback(), request_info);
     EXPECT_EQ(result_code, net::OK);
 
-    EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+    EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
   }
 }
 
 TEST_F(AdsStatusHeaderDelegateHelperTest, NonBraveSearchRequestAdsEnabled) {
   profile_->GetPrefs()->SetBoolean(brave_rewards::prefs::kEnabled, true);
+  profile_->GetPrefs()->SetBoolean(brave_ads::prefs::kOptedInToSearchResultAds,
+                                   false);
 
   auto request_info = std::make_shared<brave::BraveRequestInfo>(
       GURL(kNonBraveSearchRequestUrl));
@@ -185,7 +198,7 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, NonBraveSearchRequestAdsEnabled) {
       &headers, brave::ResponseCallback(), request_info);
   EXPECT_EQ(result_code, net::OK);
 
-  EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+  EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
 }
 
 TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchHostAdsDisabled) {
@@ -205,7 +218,7 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchHostAdsDisabled) {
         &headers, brave::ResponseCallback(), request_info);
     EXPECT_EQ(result_code, net::OK);
 
-    EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+    EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
   }
 
   {
@@ -216,7 +229,41 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchHostAdsDisabled) {
         &headers, brave::ResponseCallback(), request_info);
     EXPECT_EQ(result_code, net::OK);
 
-    EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+    EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
+  }
+}
+
+TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchHostSearchAdsEnabled) {
+  profile_->GetPrefs()->SetBoolean(brave_rewards::prefs::kEnabled, true);
+  profile_->GetPrefs()->SetBoolean(brave_ads::prefs::kOptedInToSearchResultAds,
+                                   true);
+
+  auto request_info =
+      std::make_shared<brave::BraveRequestInfo>(GURL(kBraveSearchRequestUrl));
+  request_info->browser_context = profile_.get();
+  request_info->tab_origin = GURL(kBraveSearchTabUrl);
+  request_info->initiator_url = GURL(kBraveSearchTabUrl);
+
+  {
+    request_info->resource_type = blink::mojom::ResourceType::kMainFrame;
+
+    net::HttpRequestHeaders headers;
+    const int result_code = brave::OnBeforeStartTransaction_AdsStatusHeader(
+        &headers, brave::ResponseCallback(), request_info);
+    EXPECT_EQ(result_code, net::OK);
+
+    EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
+  }
+
+  {
+    request_info->resource_type = blink::mojom::ResourceType::kXhr;
+
+    net::HttpRequestHeaders headers;
+    const int result_code = brave::OnBeforeStartTransaction_AdsStatusHeader(
+        &headers, brave::ResponseCallback(), request_info);
+    EXPECT_EQ(result_code, net::OK);
+
+    EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
   }
 }
 
@@ -236,12 +283,14 @@ TEST_F(AdsStatusHeaderDelegateHelperTest, BraveSearchHostIncognitoProfile) {
       &headers, brave::ResponseCallback(), request_info);
   EXPECT_EQ(result_code, net::OK);
 
-  EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+  EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
 }
 
 TEST_F(AdsStatusHeaderDelegateHelperTest,
        BraveSearchHostIncognitoProfileWhenRewardsEnabledInMainProfile) {
   profile_->GetPrefs()->SetBoolean(brave_rewards::prefs::kEnabled, true);
+  profile_->GetPrefs()->SetBoolean(brave_ads::prefs::kOptedInToSearchResultAds,
+                                   false);
 
   TestingProfile* incognito_profile =
       TestingProfile::Builder().BuildIncognito(profile_.get());
@@ -258,5 +307,5 @@ TEST_F(AdsStatusHeaderDelegateHelperTest,
       &headers, brave::ResponseCallback(), request_info);
   EXPECT_EQ(result_code, net::OK);
 
-  EXPECT_FALSE(headers.HasHeader(brave::kAdsStatusHeader));
+  EXPECT_FALSE(headers.HasHeader(brave::kSearchAdsEnabledHeader));
 }

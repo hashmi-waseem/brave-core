@@ -5,12 +5,28 @@
 
 #include "brave/browser/net/brave_ads_status_header_network_delegate_helper.h"
 
+#include "brave/components/brave_ads/core/public/prefs/pref_names.h"
 #include "brave/components/brave_rewards/common/pref_names.h"
 #include "brave/components/brave_search/common/brave_search_utils.h"
 #include "chrome/browser/profiles/profile.h"
 #include "components/prefs/pref_service.h"
 #include "content/public/browser/browser_context.h"
 #include "net/base/net_errors.h"
+
+namespace {
+
+bool SearchAdsEnabledForProfile(Profile* profile) {
+  if (!profile || profile->IsOffTheRecord()) {
+    return true;
+  }
+  auto* prefs = profile->GetPrefs();
+  if (!prefs->GetBoolean(brave_rewards::prefs::kEnabled)) {
+    return true;
+  }
+  return prefs->GetBoolean(brave_ads::prefs::kOptedInToSearchResultAds);
+}
+
+}  // namespace
 
 namespace brave {
 
@@ -19,24 +35,22 @@ int OnBeforeStartTransaction_AdsStatusHeader(
     const ResponseCallback& next_callback,
     std::shared_ptr<BraveRequestInfo> ctx) {
   Profile* profile = Profile::FromBrowserContext(ctx->browser_context);
-  // The X-Brave-Ads-Enabled header is not added for Incognito mode because
-  // Brave Private Ads are not supported in this mode.
-  if (!profile || profile->IsOffTheRecord()) {
-    return net::OK;
-  }
 
-  // The X-Brave-Ads-Enabled header should be added when Brave Private Ads are
-  // enabled, the requested URL host is one of the Brave Search domains, and the
-  // request originates from one of the Brave Search domains.
-  if (!profile->GetPrefs()->GetBoolean(brave_rewards::prefs::kEnabled) ||
+  // The Brave-Search-Ads-Enabled header should be added with a negative value
+  // when all of the following conditions are met:
+  //   - Brave Rewards is enabled for the profile.
+  //   - The "Search Ads" option is not enabled for the profile.
+  //   - The requested URL host is one of the Brave Search domains.
+  //   - The request originates from one of the Brave Search domains.
+  if (SearchAdsEnabledForProfile(profile) ||
       !brave_search::IsAllowedHost(ctx->request_url) ||
       (!brave_search::IsAllowedHost(ctx->tab_origin) &&
        !brave_search::IsAllowedHost(ctx->initiator_url))) {
     return net::OK;
   }
 
-  headers->SetHeader(kAdsStatusHeader, kAdsEnabledStatusValue);
-  ctx->set_headers.insert(kAdsStatusHeader);
+  headers->SetHeader(kSearchAdsEnabledHeader, kSearchAdsDisabledValue);
+  ctx->set_headers.insert(kSearchAdsEnabledHeader);
 
   return net::OK;
 }
