@@ -759,75 +759,54 @@ public class BraveSyncScreensPreference extends BravePreferenceFragment
     }
 
     void generateNewCodeWords() {
-        getActivity()
-                .runOnUiThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                String codePhrase = getPureWords();
-                                assert codePhrase != null && !codePhrase.isEmpty();
-                                String timeLimitedWords =
-                                        getBraveSyncWorker()
-                                                .getTimeLimitedWordsFromPure(codePhrase);
-                                assert timeLimitedWords != null && !timeLimitedWords.isEmpty();
-                                mBraveSyncAddDeviceCodeWords.setVisibility(View.VISIBLE);
-                                mBraveSyncAddDeviceCodeWords.setText(timeLimitedWords);
-                                mCopyButton.setVisibility(View.VISIBLE);
-                                mNewCodeWordsButton.setVisibility(View.GONE);
+        ThreadUtils.assertOnUiThread();
 
-                                LocalDateTime notAfterTime =
-                                        getBraveSyncWorker()
-                                                .getNotAfterFromFromTimeLimitedWords(
-                                                        timeLimitedWords);
-                                setWordsCountDown(notAfterTime);
-                            }
-                        });
+        String codePhrase = getPureWords();
+        assert codePhrase != null && !codePhrase.isEmpty();
+        String timeLimitedWords = getBraveSyncWorker().getTimeLimitedWordsFromPure(codePhrase);
+        assert timeLimitedWords != null && !timeLimitedWords.isEmpty();
+        mBraveSyncAddDeviceCodeWords.setVisibility(View.VISIBLE);
+        mBraveSyncAddDeviceCodeWords.setText(timeLimitedWords);
+        mCopyButton.setVisibility(View.VISIBLE);
+        mNewCodeWordsButton.setVisibility(View.GONE);
+
+        LocalDateTime notAfterTime =
+                getBraveSyncWorker().getNotAfterFromFromTimeLimitedWords(timeLimitedWords);
+        setWordsCountDown(notAfterTime);
     }
 
     void generateNewQrCode() {
-        getActivity()
-                .runOnUiThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                String seedHex =
-                                        getBraveSyncWorker().getSeedHexFromWords(getPureWords());
-                                if (null == seedHex || seedHex.isEmpty()) {
-                                    // Give up, seed must be valid
-                                    Log.e(TAG, "setAddMobileDeviceLayout seedHex is empty");
-                                    assert false;
-                                } else {
-                                    if (!isSeedHexValid(seedHex)) {
-                                        Log.e(TAG, "fillQrCode - invalid QR code");
-                                        // Normally must not reach here ever, because the code is
-                                        // validated right
-                                        // after scan
-                                        assert false;
-                                        showEndDialog(
-                                                getResources()
-                                                        .getString(R.string.sync_device_failure),
-                                                () -> {});
-                                        return;
-                                    } else {
-                                        String qrCodeString =
-                                                getBraveSyncWorker().getQrDataJson(seedHex);
-                                        assert qrCodeString != null && !qrCodeString.isEmpty();
+        ThreadUtils.assertOnUiThread();
 
-                                        LocalDateTime notAfterTime =
-                                                getNotAfterFromQrCodeString(qrCodeString);
+        String seedHex = getBraveSyncWorker().getSeedHexFromWords(getPureWords());
+        if (null == seedHex || seedHex.isEmpty()) {
+            // Give up, seed must be valid
+            Log.e(TAG, "setAddMobileDeviceLayout seedHex is empty");
+            assert false;
+        } else {
+            if (!isSeedHexValid(seedHex)) {
+                Log.e(TAG, "fillQrCode - invalid QR code");
+                // Normally must not reach here ever, because the code is
+                // validated right
+                // after scan
+                assert false;
+                showEndDialog(getResources().getString(R.string.sync_device_failure), () -> {});
+                return;
+            } else {
+                String qrCodeString = getBraveSyncWorker().getQrDataJson(seedHex);
+                assert qrCodeString != null && !qrCodeString.isEmpty();
 
-                                        setQrCountDown(notAfterTime);
+                LocalDateTime notAfterTime = getNotAfterFromQrCodeString(qrCodeString);
 
-                                        ChromeBrowserInitializer.getInstance()
-                                                .runNowOrAfterFullBrowserStarted(
-                                                        () -> fillQrCode(qrCodeString));
+                setQrCountDown(notAfterTime);
 
-                                        mQRCodeImage.setVisibility(View.VISIBLE);
-                                        mNewQrCodeButton.setVisibility(View.GONE);
-                                    }
-                                }
-                            }
-                        });
+                ChromeBrowserInitializer.getInstance()
+                        .runNowOrAfterFullBrowserStarted(() -> fillQrCode(qrCodeString));
+
+                mQRCodeImage.setVisibility(View.VISIBLE);
+                mNewQrCodeButton.setVisibility(View.GONE);
+            }
+        }
     }
 
     private LocalDateTime getNotAfterFromQrCodeString(String qrCodeString) {
