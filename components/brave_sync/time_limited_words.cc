@@ -218,7 +218,7 @@ base::Time TimeLimitedWords::GetNotAfter(
       time_limited_words, " ", base::WhitespaceHandling::TRIM_WHITESPACE,
       base::SplitResult::SPLIT_WANT_NONEMPTY);
   size_t num_words = words.size();
-  DCHECK_EQ(num_words, kWordsV2Count);
+
   if (num_words != kWordsV2Count) {
     return base::Time();
   }
