@@ -224,7 +224,7 @@ base::Time TimeLimitedWords::GetNotAfter(
   }
 
   int days_encoded = GetIndexByWord(words[kWordsV2Count - 1]);
-  // +36h is the furthest time to satisfy thelse lines from
+  // +36h is the furthest time to satisfy these lines from
   // TimeLimitedWords::ParseImpl:
   // ```
   //   int days_abs_diff = std::abs(days_actual - days_encoded);
