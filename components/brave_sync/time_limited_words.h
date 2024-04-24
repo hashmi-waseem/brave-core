@@ -65,7 +65,8 @@ class TimeLimitedWords {
   enum class WrongDateBehaviour { kIgnore = 1, kDontAllow = 2 };
   static base::expected<std::string, ValidationStatus> ParseImpl(
       const std::string& time_limited_words,
-      WrongDateBehaviour wrong_date_behaviour);
+      WrongDateBehaviour wrong_date_behaviour,
+      const base::Time& now);
 
   static base::Time GetWordsV1SunsetDay();
   static base::Time GetWordsV2Epoch();
