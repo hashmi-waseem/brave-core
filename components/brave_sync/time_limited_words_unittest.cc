@@ -257,4 +257,8 @@ TEST(TimeLimitedWordsTest, GetNotAfter) {
   }
 }
 
+TEST(TimeLimitedWordsTest, GetNotAfterForPureWords) {
+  EXPECT_EQ(TimeLimitedWords::GetNotAfter(kValidSyncCode), base::Time());
+}
+
 }  // namespace brave_sync
