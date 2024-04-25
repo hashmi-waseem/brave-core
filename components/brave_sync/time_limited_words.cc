@@ -135,11 +135,12 @@ TimeLimitedWords::GenerateForDate(const std::string& pure_words,
 
 base::expected<std::string, TimeLimitedWords::ValidationStatus>
 TimeLimitedWords::ParseImpl(const std::string& time_limited_words,
-                            WrongDateBehaviour wrong_date_behaviour,
-                            const Time& now) {
+                            WrongDateBehaviour wrong_date_behaviour) {
   using ValidationStatus = TimeLimitedWords::ValidationStatus;
 
   static constexpr size_t kPureWordsCount = 24u;
+
+  auto now = Time::Now();
 
   std::vector<std::string> words = base::SplitString(
       time_limited_words, " ", base::WhitespaceHandling::TRIM_WHITESPACE,
@@ -192,14 +193,12 @@ TimeLimitedWords::ParseImpl(const std::string& time_limited_words,
 
 base::expected<std::string, TimeLimitedWords::ValidationStatus>
 TimeLimitedWords::Parse(const std::string& time_limited_words) {
-  return ParseImpl(time_limited_words, WrongDateBehaviour::kDontAllow,
-                   Time::Now());
+  return ParseImpl(time_limited_words, WrongDateBehaviour::kDontAllow);
 }
 
 base::expected<std::string, TimeLimitedWords::ValidationStatus>
 TimeLimitedWords::ParseIgnoreDate(const std::string& time_limited_words) {
-  return ParseImpl(time_limited_words, WrongDateBehaviour::kIgnore,
-                   Time::Now());
+  return ParseImpl(time_limited_words, WrongDateBehaviour::kIgnore);
 }
 
 std::string TimeLimitedWords::GenerateResultToText(
@@ -212,6 +211,7 @@ std::string TimeLimitedWords::GenerateResultToText(
   }
 }
 
+// static
 base::Time TimeLimitedWords::GetNotAfter(
     const std::string& time_limited_words) {
   std::vector<std::string> words = base::SplitString(
@@ -224,23 +224,17 @@ base::Time TimeLimitedWords::GetNotAfter(
   }
 
   int days_encoded = GetIndexByWord(words[kWordsV2Count - 1]);
-  const base::Time anchorTime = GetWordsV2Epoch() + base::Days(days_encoded);
+  // +36h is the furthest time to satisfy these lines from
+  // TimeLimitedWords::ParseImpl:
+  // ```
+  //   int days_abs_diff = std::abs(days_actual - days_encoded);
+  //   if (days_abs_diff <= 1) {
+  //     return recombined_pure_words;
+  //   }
+  // ```
+  // See also TimeLimitedWordsTest.GetNotAfter test.
 
-  // Iterate with 1 hour interval to find the point when the words will be
-  // rejected
-  for (base::Time time_to_check = anchorTime;;
-       time_to_check += base::Hours(1)) {
-    auto parse_status = ParseImpl(
-        time_limited_words, WrongDateBehaviour::kDontAllow, time_to_check);
-    if (!parse_status.has_value()) {
-      // This is to prove in debug by practice that it is +36 hours
-      DCHECK_EQ((time_to_check - anchorTime).InHours(), 36);
-      return time_to_check;
-    }
-  }
-
-  CHECK(false) << "Not expected to reach this point";
-  return base::Time();
+  return words_v2_epoch_ + base::Days(days_encoded) + base::Hours(36);
 }
 
 }  // namespace brave_sync
