@@ -223,7 +223,7 @@ base::Time TimeLimitedWords::GetNotAfter(
     return base::Time();
   }
 
-  int days_encoded = GetIndexByWord(words[kWordsV2Count - 1]);
+  int days_encoded = GetIndexByWord(words[kWordsV2Count - 1u]);
   const base::Time anchor_time = GetWordsV2Epoch() + base::Days(days_encoded);
 
   // We need to find not_after as the offset from the anchor time which would
