@@ -224,17 +224,28 @@ base::Time TimeLimitedWords::GetNotAfter(
   }
 
   int days_encoded = GetIndexByWord(words[kWordsV2Count - 1]);
-  // +36h is the furthest time to satisfy these lines from
-  // TimeLimitedWords::ParseImpl:
-  // ```
-  //   int days_abs_diff = std::abs(days_actual - days_encoded);
-  //   if (days_abs_diff <= 1) {
-  //     return recombined_pure_words;
-  //   }
-  // ```
-  // See also TimeLimitedWordsTest.GetNotAfter test.
+  const base::Time anchor_time = GetWordsV2Epoch() + base::Days(days_encoded);
 
-  return words_v2_epoch_ + base::Days(days_encoded) + base::Hours(36);
+  // We need to find not_after as the offset from the anchor time which would
+  // satisfy this pseudo equation derived from TimeLimitedWords::ParseImpl:
+  //
+  //    GetRoundedDaysDiff(anchor + x, anchor) = 2
+  //        expand GetRoundedDaysDiff:
+  //    round(anchor - (anchor + x)) = 2
+  //    round(x) = 2
+  //    x=1.5...2.49999
+  //        and we need the smallest value of x, so it is 1.5 days or 36 hours.
+  const base::TimeDelta k1_5dayOffset = base::Hours(36);
+  base::Time not_after = anchor_time + k1_5dayOffset;
+
+  // Re-check in debug build the solution is correct.
+  // We should have two days rounded difference for our result, which means code
+  // words are rejected. And a moment before our result diffecence should be 1,
+  // which means code words are accepted.
+  DCHECK_EQ(GetRoundedDaysDiff(anchor_time, not_after), 2);
+  DCHECK_EQ(GetRoundedDaysDiff(anchor_time, not_after - base::Seconds(1)), 1);
+
+  return not_after;
 }
 
 }  // namespace brave_sync
