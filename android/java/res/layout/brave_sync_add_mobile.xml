@@ -101,7 +101,7 @@
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Generate New Code"
+            android:text="@string/brave_sync_generate_new_code_button"
             xmlns:tools="http://schemas.android.com/tools"
             tools:ignore="HardcodedText"
             style="@style/BraveSyncButtonTransparent"/>
