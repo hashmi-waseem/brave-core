@@ -9,8 +9,5 @@
     android:shape="rectangle">
     <solid android:color="@android:color/transparent" />
     <stroke android:width="1dip" android:color="@color/brave_sync_main_button_color"/>
-    <corners android:bottomRightRadius="12dp"
-        android:bottomLeftRadius="12dp"
-        android:topRightRadius="12dp"
-        android:topLeftRadius="12dp" />
+    <corners android:radius="12dp" />
 </shape>
