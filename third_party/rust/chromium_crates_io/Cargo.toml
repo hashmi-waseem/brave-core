@@ -80,7 +80,7 @@ path = "../../../components/challenge_bypass_ristretto/rust/cxx"
 package = "challenge-bypass-ristretto-cxx"
 
 [patch.crates-io.anonymous-credentials_v0_1]
-path = "../../../components/web_discovery_project/browser/anonymous_credentials/rs"
+path = "../../../components/web_discovery/browser/anonymous_credentials/rs"
 package = "anonymous-credentials-cxx"
 
 [patch.crates-io.aho_corasick_v1]
