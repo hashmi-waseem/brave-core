@@ -219,9 +219,6 @@
       </message>
 
       <!-- Tab Group Tab Switcher strings -->
-      <message name="IDS_TABSWITCHER_CREATE_GROUP" desc="This flat button is shown in the Tab Switcher, under an open tab. When the user taps the button, Brave creates a new group of tabs that includes the existing tab. It's okay to use any of the following verbs in order to keep the text under 45 characters: Create, Make, Add.">
-        Create group
-      </message>
       <message name="IDS_ACCESSIBILITY_TAB_SWITCHER" desc="Accessibility string for Tab Switcher view. This string is announced when the Tab Switcher is shown to screen.">
         Tab Switcher
       </message>
@@ -720,6 +717,9 @@
           =1 {Created <ph name="NUM_YEARS_ONE">%d<ex>1</ex></ph> year ago}
           other {Created <ph name="NUM_YEARS_MANY">%d<ex>2</ex></ph> years ago}
         }
+      </message>
+      <message name="IDS_PLUS_HIDDEN_TAB_COUNT" desc="A string to show how many other tabs are contained in a tab group who's favicons are not shown. [CHAR_LIMIT=5]">
+        +<ph name="HIDDEN_TABS_COUNT">%1$s<ex>3</ex></ph>
       </message>
     </messages>
   </release>
