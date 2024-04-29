@@ -9,11 +9,17 @@ import {
   WalletPanelStory //
 } from '../../../stories/wrappers/wallet-panel-story-wrapper'
 import { EnableTransactionSimulations } from './enable_transaction_simulations'
+import { PanelWrapper } from '../../../panel/style'
+import { LongWrapper } from '../../../stories/style'
 
 export const _EnableTransactionSimulations = () => {
   return (
     <WalletPanelStory walletApiDataOverrides={{}}>
-      <EnableTransactionSimulations />
+      <PanelWrapper isLonger={true}>
+        <LongWrapper padding='0px'>
+          <EnableTransactionSimulations />
+        </LongWrapper>
+      </PanelWrapper>
     </WalletPanelStory>
   )
 }

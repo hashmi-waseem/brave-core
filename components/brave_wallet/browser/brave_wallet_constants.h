@@ -47,6 +47,8 @@ inline constexpr char kSimpleHashBraveProxyUrl[] =
 
 inline constexpr webui::LocalizedString kLocalizedStrings[] = {
     {"braveWalletNoRoutesFound", IDS_BRAVE_WALLET_NO_ROUTES_FOUND},
+    {"braveWalletTransactionSimulationFeatureDescription",
+     IDS_BRAVE_WALLET_TRANSACTION_SIMULATION_FEATURE_DESCRIPTION},
     {"braveWalletOwnershipChange", IDS_BRAVE_WALLET_OWNERSHIP_CHANGE},
     {"braveWalletFoundIssues", IDS_BRAVE_WALLET_FOUND_ISSUES},
     {"braveWalletContract", IDS_BRAVE_WALLET_CONTRACT},
@@ -127,8 +129,6 @@ inline constexpr webui::LocalizedString kLocalizedStrings[] = {
      IDS_BRAVE_WALLET_UNLIMITED_ASSET_AMOUNT},
     {"braveWalletFrom", IDS_BRAVE_WALLET_FROM},
     {"braveWalletReceive", IDS_BRAVE_WALLET_RECEIVE},
-    {"braveWalletChangeAnytimeInSettings",
-     IDS_BRAVE_WALLET_CHANGE_ANYTIME_IN_SETTINGS},
     {"braveWalletAvailable", IDS_BRAVE_WALLET_AVAILABLE},
     {"braveWalletAvailableBalanceDescription",
      IDS_BRAVE_WALLET_AVAILABLE_BALANCE_DESCRIPTION},
@@ -148,8 +148,8 @@ inline constexpr webui::LocalizedString kLocalizedStrings[] = {
      IDS_BRAVE_WALLET_TRANSACTION_SIMULATION_DETECT_MALICIOUS},
     {"braveWalletTransactionSimulationSeeEstimates",
      IDS_BRAVE_WALLET_TRANSACTION_SIMULATION_SEE_ESTIMATES},
-    {"braveWalletEnableEnhancedTransactionDetailsTitle",
-     IDS_BRAVE_WALLET_ENABLE_ENHANCED_TRANSACTION_DETAILS_TITLE},
+    {"braveWalletEnableTransactionSimulation",
+     IDS_BRAVE_WALLET_ENABLE_TRANSACTION_SIMULATION},
     {"braveWalletNetworkFees", IDS_BRAVE_WALLET_NETWORK_FEES},
     {"braveWalletSolanaSysvarRentProgram",
      IDS_BRAVE_WALLET_SOLANA_SYSVAR_RENT_PROGRAM},
