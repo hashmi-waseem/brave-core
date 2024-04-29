@@ -910,12 +910,6 @@ Permissions you've already given to websites and apps may apply to this account.
         </message>
       </if>
 
-      <if expr="is_win or is_macosx or is_linux">
-        <message name="IDS_RELAUNCH_TO_UPDATE_ALT" desc="Alternate text label of the relaunch to update Brave menu item" translateable="false">
-        Not used in Brave. Placeholder to keep resource maps in sync.
-        </message>
-      </if>
-
       <if expr="is_macosx">
         <message name="IDS_APP_MENU_PRODUCT_NAME" desc="The application's short name, used for the Mac's application menu, activity monitor, etc. This should be less than 16 characters. Example: Brave, not Brave." translateable="false">
           Brave
@@ -1690,6 +1684,14 @@ Permissions you've already given to websites and apps may apply to this account.
         <message name="IDS_PASSWORD_MANAGER_IPH_BODY_WEB_APP_PROFILE_SWITCH" desc="Body of the in Product Help for profile switching shown in the password manager web app.">
           You can switch to see passwords from another Brave profile
         </message>
+
+        <!-- Web Signout Intercept IPH -->
+        <message name="IDS_SIGNOUT_DICE_WEB_INTERCEPT_BUBBLE_CHROME_SIGNOUT_IPH_TEXT" translateable="false" desc="This confirmation message is intended to help users to understand that signing out of a Brave service (like Gmail) will not sign them out of Brave. It appears in a blue in-product help bubble, which points to the Brave Profile Menu; it appears after the user signs out of a Brave service (like Gmail). The user can open the Profile Menu and sign out of Brave, if they wish to do so.">
+          To remove your Brave sync chain from Brave, sign out
+        </message>
+        <message name="IDS_SIGNOUT_DICE_WEB_INTERCEPT_BUBBLE_CHROME_SIGNOUT_IPH_TEXT_SCREENREADER" translateable="false" desc="Text announced by screenreaders related to the confirmation message is intended to help users to understand that signing out of a Brave service (like Gmail) will not sign them out of Brave. It appears in a blue in-product help bubble, which points to the Brave Profile Menu; it appears after the user signs out of a Brave service (like Gmail). The user can open the Profile Menu and sign out of Brave, if they wish to do so.">
+          To remove your Brave sync chain from Brave, sign out of Brave in the Settings page
+        </message>
       </if>
 
       <!-- Strings for full restore notifications -->
@@ -1976,9 +1978,9 @@ Permissions you've already given to websites and apps may apply to this account.
         </if>
       </if>
 
-      <!-- Clear Browsing Data -->
-      <message name="IDS_SETTINGS_CLEAR_BROWSING_DATA_SIGNED_IN" desc="Description in the footer of the Clear Browsing Data dialog when the user is signed.">
-        To clear browsing data from this device only, while keeping it in your Brave sync chain, <ph name="BEGIN_LINK">&lt;a href="#" target="_blank"&gt;</ph>sign out of Brave<ph name="END_LINK">&lt;/a&gt;</ph>.
+      <!-- Delete Browsing Data -->
+      <message name="IDS_SETTINGS_CLEAR_BROWSING_DATA_SIGNED_IN" desc="Description in the footer of the Delete Browsing Data dialog when the user is signed.">
+        To delete browsing data from this device only, while keeping it in your Brave sync chain, <ph name="BEGIN_LINK">&lt;a href="#" target="_blank"&gt;</ph>sign out of Brave<ph name="END_LINK">&lt;/a&gt;</ph>.
       </message>
     <message name="IDS_CHROME_SHORTCUT_NAME_BETA" desc="The Chrome shortcut name for beta channel">
           Google Chrome Beta

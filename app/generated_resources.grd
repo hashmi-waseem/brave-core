@@ -1231,6 +1231,14 @@ are declared in tools/grit/grit_rule.gni.
           <message name="IDS_PASSWORDS_AND_AUTOFILL_MENU" desc="The text label of the passwords and autofill menu item">
             Passwords and &amp;autofill
           </message>
+        <if expr="is_win or is_macosx or is_linux">
+          <message name="IDS_RELAUNCH_TO_UPDATE_ALT" desc="Alternate text label of the relaunch to update Brave menu item">
+            Relaunch to update
+          </message>
+          <message name="IDS_RELAUNCH_TO_UPDATE_ALT_MINOR_TEXT" desc="Minor text for the alternate text label of the relaunch to update Brave menu item">
+            Your tabs will reopen
+          </message>
+        </if>
           <message name="IDS_NEW_TAB" desc="The text label of a menu item for opening a new tab">
             New &amp;tab
           </message>
@@ -1374,6 +1382,14 @@ are declared in tools/grit/grit_rule.gni.
           <message name="IDS_PASSWORDS_AND_AUTOFILL_MENU" desc="In Title Case: The text label of the passwords and autofill menu item">
             Passwords and &amp;Autofill
           </message>
+          <if expr="is_win or is_macosx or is_linux">
+              <message name="IDS_RELAUNCH_TO_UPDATE_ALT" desc="In Title Case: Alternate text label of the relaunch to update Brave menu item">
+                Relaunch to Update
+              </message>
+            <message name="IDS_RELAUNCH_TO_UPDATE_ALT_MINOR_TEXT" desc="In Title Case: Minor text for the alternate text label of the relaunch to update Brave menu item">
+              Your tabs will reopen
+            </message>
+          </if>
           <message name="IDS_NEW_TAB" desc="In Title Case: The text label of a menu item for opening a new tab">
             New &amp;Tab
           </message>
@@ -1694,8 +1710,8 @@ are declared in tools/grit/grit_rule.gni.
         <message name="IDS_FULLSCREEN" desc="Switches into fullscreen mode">
           &amp;Full screen
         </message>
-        <message name="IDS_CLEAR_BROWSING_DATA" desc="The text label for the menu item for clearing of browsing data">
-          &amp;Clear browsing data...
+        <message name="IDS_CLEAR_BROWSING_DATA" desc="The text label for the menu item for deleting of browsing data">
+          &amp;Delete browsing data...
         </message>
         <message name="IDS_SHOW_DOWNLOADS" desc="The show downloads menu in the app menu">
           &amp;Downloads
@@ -1750,8 +1766,8 @@ are declared in tools/grit/grit_rule.gni.
         <message name="IDS_FULLSCREEN" desc="In Title Case: Switches into fullscreen mode">
           &amp;Full Screen
         </message>
-        <message name="IDS_CLEAR_BROWSING_DATA" desc="In Title Case: The text label for the menu item for clearing of browsing data">
-          &amp;Clear Browsing Data...
+        <message name="IDS_CLEAR_BROWSING_DATA" desc="In Title Case: The text label for the menu item for deleting of browsing data">
+          &amp;Delete Browsing Data...
         </message>
         <message name="IDS_SHOW_DOWNLOADS" desc="In Title Case: The show downloads menu in the app menu">
           &amp;Downloads
@@ -2135,6 +2151,9 @@ are declared in tools/grit/grit_rule.gni.
       </message>
       <message name="IDS_PROMPT_DOWNLOAD_SENSITIVE_CONTENT_BLOCKED" desc="Message shown in the download shelf when a download contains sensitive content, and the admin has chosen to block the file">
         Your organization's policies aren't met
+      </message>
+      <message name="IDS_PROMPT_DOWNLOAD_BLOCKED_SCAN_FAILED" desc="Message shown in the download shelf when the deep scan of the file fails and the admin has chosen to block the file">
+        Scan failed. This file is blocked by your administrator
       </message>
       <message name="IDS_PROMPT_DOWNLOAD_DEEP_SCANNED_OPENED_DANGEROUS" desc="Message shown in the download shelf when a download is finished being scanned, and issues were found">
         This file is dangerous
@@ -2881,6 +2900,9 @@ are declared in tools/grit/grit_rule.gni.
       <message name="IDS_DOWNLOAD_BUBBLE_STATUS_SENSITIVE_CONTENT" desc="Dangerous warning for a file with sensitive content">
         Sensitive content
       </message>
+      <message name="IDS_DOWNLOAD_BUBBLE_STATUS_SCAN_FAILED" desc="Dangerous warning for a file with failed scan">
+        Scan failed
+      </message>
       <message name="IDS_DOWNLOAD_BUBBLE_SUBPAGE_SUMMARY_SENSITIVE_CONTENT_WARNING" desc="Subpage summary text of warning for download item that contains sensitive content">
         Your organization recommends deleting this file because it has sensitive content
       </message>
@@ -2907,6 +2929,9 @@ are declared in tools/grit/grit_rule.gni.
       </message>
       <message name="IDS_DOWNLOAD_BUBBLE_SUBPAGE_SUMMARY_ASYNC_SCANNING_CANCEL" desc="Subpage button to cancel a download deep scan">
         Cancel
+      </message>
+      <message name="IDS_DOWNLOAD_BUBBLE_SUBPAGE_SUMMARY_SCAN_FAILED" desc="Subpage summary of dangerous warning for a file with failed scan.">
+        Your organization blocked this file because the scan failed.
       </message>
       <message name="IDS_DOWNLOAD_BUBBLE_TRY_AGAIN" desc="Retry button when a download is failed">
         Try again
@@ -3016,12 +3041,14 @@ are declared in tools/grit/grit_rule.gni.
       <message name="IDS_DOWNLOAD_BUBBLE_TOOLTIP_IN_PROGRESS_COUNT" desc="Tooltip text for the download toolbar button, displayed when there are one or more downloads in progress.">
         {COUNT, plural, =1 {1 download in progress} other {# downloads in progress}}
       </message>
-      <message name="IDS_DOWNLOAD_ROW_ESB_PROMOTION" desc="Link button text that teaches the user about Enhanced Protection.">
-        Discover enhanced protection to get Brave's highest level of security for downloads
-      </message>
-      <message name="IDS_DOWNLOAD_ROW_ESB_PROMO_A11Y" desc="ARIA (accessibility) label describing a link which opens in a new tab.">
-        Opens security settings page in a new tab
-      </message>
+      <if expr="_google_chrome">
+        <message name="IDS_DOWNLOAD_ROW_ESB_PROMOTION" desc="Link button text that teaches the user about Enhanced Protection.">
+          Discover enhanced protection to get Brave's highest level of security for downloads
+        </message>
+        <message name="IDS_DOWNLOAD_ROW_ESB_PROMO_A11Y" desc="ARIA (accessibility) label describing a link which opens in a new tab.">
+          Opens security settings page in a new tab
+        </message>
+      </if>
 
       <!-- Tailored Warning in Download Bubble -->
       <message name="IDS_DOWNLOAD_BUBBLE_SUBPAGE_SUMMARY_WARNING_COOKIE_THEFT" desc="Subpage summary for cookie theft warning.">
@@ -3139,6 +3166,16 @@ are declared in tools/grit/grit_rule.gni.
           Create
         </message>
       </if>
+
+      <message name="IDS_CREATE_SHORTCUT_NOT_APPS_DIALOG_TITLE" desc="Title of the updated Create Shortcut dialog">
+        Create a shortcut to this page
+      </message>
+      <message name="IDS_CREATE_SHORTCUT_NOT_APPS_DIALOG_SUBTITLE" desc="Subtitle of the updated Create Shortcut dialog about how the site opens">
+        Shortcuts open in Brave
+      </message>
+      <message name="IDS_CREATE_SHORTCUT_NOT_APPS_AX_BUBBLE_LABEL" desc="Text preceding the name of a site for a shortcut to be created on, read by spoken feedback.">
+        Site name
+      </message>
 
       <!-- "Install web app" confirmation bubble for simple install dialog, detailed install dialog as well as DIY apps. -->
       <message name="IDS_INSTALL_TO_OS_LAUNCH_SURFACE_BUBBLE_TITLE" desc="Title of the bubble for installing a web app to the operating system.">
@@ -3742,15 +3779,6 @@ are declared in tools/grit/grit_rule.gni.
       </message>
       <message name="IDS_COOKIE_CONTROLS_PROMO_SEE_HOW_BUTTON_TEXT" desc="Text on the button that opens the cookie controls bubble on the in-product-help bubble shown for the cookie controls bubble. Encourages users to see how to temporarily enable third-party cookies.">
         See how
-      </message>
-      <message name="IDS_3PCD_USER_BYPASS_PROMO_TITLE" desc="Title of the in-product-help bubble shown for the user bypass feature. Reminds the user that tracking protection is on.">
-        Reminder: Tracking Protection is on
-      </message>
-      <message name="IDS_3PCD_USER_BYPASS_PROMO_TEXT" desc="Text on the in-product-help bubble shown for the user bypass feature. Explains that if a site is broken, enabling third-party cookies for the site might fix it.">
-        If a site you visit isn't working as expected, try temporarily allowing third-party cookies for that site. That will mean less protection but site features are more likely to work as expected.
-      </message>
-      <message name="IDS_3PCD_USER_BYPASS_PROMO_SCREENREADER" desc="Text announced with the in-product-help bubble shown for the user bypass feature. Explains how to temporarily enable third-party cookies if a site isn't working.">
-        If a site isn't working as expected, you can enable third-party cookies for it through the Tracking Protection option in the address bar.
       </message>
 
       <!-- Win certificate selector dialog strings.  -->
@@ -6137,7 +6165,7 @@ Keep your key file in a safe place. You will need it to create new versions of y
         Extensions can request access to this site
       </message>
       <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_RELOAD_CONTAINER_DESCRIPTION_TEXT" desc="Text of the message section when the user has to reload the page to apply the updated user site settings.">
-        Reload this page to apply your updated settings on this site
+        To apply your updated settings to this site, reload this page
       </message>
       <message name="IDS_EXTENSIONS_MENU_MESSAGE_SECTION_RELOAD_CONTAINER_BUTTON_TEXT" desc="Text of the button in the message section to reload the page when the user has to reload the page to apply the updated user site settings.">
         Reload
@@ -7183,18 +7211,20 @@ Keep your key file in a safe place. You will need it to create new versions of y
       </message>
 
       <!-- About box strings -->
-      <if expr="is_win">
+      <if expr="is_win or is_macosx">
         <message name="IDS_ABOUT_BOX_ERROR_DURING_UPDATE_CHECK" desc="The error label for errors that occurred while checking for updates in the About box.">
           An error occurred while checking for updates: <ph name="ERROR">$1<ex>Unable to contact Brave Update</ex></ph>
         </message>
+        <message name="IDS_ABOUT_BOX_GOOGLE_UPDATE_ERROR" desc="An error message from Brave Update with details.">
+          <ph name="ERROR">$1<ex>An error message from Brave Update.</ex></ph> (error code <ph name="ERROR_CODE">$2<ex>7: 0x80000005</ex></ph>).
+        </message>
+      </if>
+      <if expr="is_win">
         <message name="IDS_ABOUT_BOX_ERROR_UPDATE_CHECK_FAILED" desc="The error message for the specific case when we cannot create the Brave Update component">
           Update check failed to start (error code <ph name="ERROR">$1<ex>0x80000005</ex></ph>).
         </message>
         <message name="IDS_ABOUT_BOX_EXTERNAL_UPDATE_IS_RUNNING" desc="The external updater is running independently.">
           The updater is currently running. Refresh in a minute to check again.
-        </message>
-        <message name="IDS_ABOUT_BOX_GOOGLE_UPDATE_ERROR" desc="An error message from Brave Update with details.">
-          <ph name="ERROR">$1<ex>An error message from Brave Update.</ex></ph> (error code <ph name="ERROR_CODE">$2<ex>7: 0x80000005</ex></ph>).
         </message>
       </if>
 
@@ -7433,9 +7463,6 @@ Keep your key file in a safe place. You will need it to create new versions of y
       </message>
       <message name="IDS_NTP_CUSTOMIZE_NO_BACKGROUND_LABEL" desc="The label for the 'Default Brave' tile in the customization menu on the New Tab Page">
         Default Brave
-      </message>
-      <message name="IDS_NTP_CUSTOMIZE_CHROME_COLORS_LABEL" desc="The label for the 'Brave Colors' tile in the New Tab Page customize chrome side panel, which lists themes of colored default chrome.">
-        Brave Colors
       </message>
       <message name="IDS_NTP_CUSTOMIZE_CHROME_CHANGE_THEME_LABEL" desc="The label for the action button for changing Brave theme in the New Tab Page customize chrome side panel.">
         Change theme
@@ -7955,8 +7982,20 @@ Keep your key file in a safe place. You will need it to create new versions of y
         <ph name="BREAK">&lt;br&gt;</ph>
         You can manage settings from the card menu or see more options in Customize Brave.
       </message>
+      <message name="IDS_NTP_MODULES_TODAY_CALENDAR_HEADER" desc="Header of the Calendar module when showing today's calendar on the NTP." meaning="Header of the calendar module to indicate that the events shown are for today." translateable="false">
+        Today's Calendar
+      </message>
       <message name="IDS_NTP_MODULES_GOOGLE_CALENDAR_TITLE" desc="Title of the Brave Calendar module shown in various UIs for Customize Brave and the NTP." meaning="Title of feature for showing a glimpse of a user's Google Calendar.">
         Brave Calendar
+      </message>
+      <message name="IDS_NTP_MODULES_GOOGLE_CALENDAR_DISABLE_BUTTON_TEXT" desc="Text shown on the disable button of a NTP Brave Calendar card." translateable="false">
+        Don't show Brave Calendar
+      </message>
+      <message name="IDS_NTP_MODULES_OUTLOOK_CALENDAR_TITLE" desc="Title of the Brave Calendar module shown in various UIs for Customize Brave and the NTP." meaning="Title of feature for showing a glimpse of a user's Google Calendar.">
+        Outlook Calendar
+      </message>
+      <message name="IDS_NTP_MODULES_OUTLOOK_CALENDAR_DISABLE_BUTTON_TEXT" desc="Text shown on the disable button of a NTP Outlook Calendar card." translateable="false">
+        Don't show Outlook Calendar
       </message>
       <message name="IDS_NTP_MODULES_PHOTOS_TITLE" desc="Title shown in the header of the photos module.">
         From your Google Photos
@@ -8685,38 +8724,83 @@ Keep your key file in a safe place. You will need it to create new versions of y
       <message name="IDS_READ_ANYTHING_LOADING" desc="Message to show while Read Anything is figuring out what text to display.">
         Getting ready
       </message>
-      <message name="IDS_READING_MODE_FONT_RESET" desc="Label for button that resets the font size of the reading mode feature back to the default font setting." translateable="false">
+      <message name="IDS_READING_MODE_FONT_RESET" desc="Label for button that resets the font size of the reading mode feature back to the default font setting.">
         Reset
       </message>
-      <message name="IDS_READING_MODE_TURN_HIGHLIGHT_OFF" desc="Tooltip label for button that turns off highlighting in Read Aloud." translateable="false">
+      <message name="IDS_READING_MODE_TURN_HIGHLIGHT_OFF" desc="Tooltip label for button that turns off highlighting in Read Aloud.">
         Turn off highlight
       </message>
-      <message name="IDS_READING_MODE_TURN_HIGHLIGHT_ON" desc="Tooltip label for button that turns on highlighting in Read Aloud." translateable="false">
+      <message name="IDS_READING_MODE_TURN_HIGHLIGHT_ON" desc="Tooltip label for button that turns on highlighting in Read Aloud.">
         Turn on highlight
       </message>
-      <message name="IDS_READING_MODE_PLAY_DESCRIPTION" desc="Accessibility description for button that plays speech in Read Aloud." translateable="false">
+      <message name="IDS_READING_MODE_PLAY_DESCRIPTION" desc="Accessibility description for button that plays speech in Read Aloud.">
         Listen to the text with natural voice
       </message>
-      <message name="IDS_READING_MODE_PLAY_SPEECH" desc="Accessibility label for button that plays speech in Read Aloud." translateable="false">
-        Play
+      <message name="IDS_READING_MODE_PLAY_SPEECH" desc="Accessible name for button that plays speech in Read Aloud.">
+        Play keyboard shortcut k
       </message>
-      <message name="IDS_READING_MODE_PAUSE_SPEECH" desc="Accessibility label for button that pauses speech in Read Aloud." translateable="false">
-        Pause
+      <message name="IDS_READING_MODE_PAUSE_SPEECH" desc="Accessibile name for button that pauses speech in Read Aloud.">
+        Pause keyboard shortcut k
       </message>
-      <message name="IDS_READING_MODE_NAVIGATE_PREVIOUS_SENTENCE" desc="Accessibility label for button that moves speech in Read Aloud to the previous sentence." translateable="false">
+      <message name="IDS_READING_MODE_PLAY_TOOLTIP" desc="Tooltip label for button that plays speech in Read Aloud.">
+        Play (k)
+      </message>
+      <message name="IDS_READING_MODE_PAUSE_TOOLTIP" desc="Tooltip label for button that pauses speech in Read Aloud.">
+        Pause (k)
+      </message>
+      <message name="IDS_READING_MODE_STOP_SPEECH" desc="Accessibility label for button that stops speech in Read Aloud.">
+        Stop
+      </message>
+      <message name="IDS_READING_MODE_NAVIGATE_PREVIOUS_SENTENCE" desc="Accessibility label for button that moves speech in Read Aloud to the previous sentence.">
         Previous sentence
       </message>
-      <message name="IDS_READING_MODE_NAVIGATE_NEXT_SENTENCE" desc="Accessibility label for button that moves speech in Read Aloud to the next sentence." translateable="false">
+      <message name="IDS_READING_MODE_NAVIGATE_NEXT_SENTENCE" desc="Accessibility label for button that moves speech in Read Aloud to the next sentence.">
         Next sentence
       </message>
-      <message name="IDS_READING_MODE_MORE_OPTIONS" desc="Accessibility label for button that contains more text style options for the reading mode feature." translateable="false">
+      <message name="IDS_READING_MODE_MORE_OPTIONS" desc="Accessibility label for button that contains more text style options for the reading mode feature.">
         More options
       </message>
-      <message name="IDS_READING_MODE_VOICE_SPEED" desc="Accessibility label for button that opens a dropdown with options for changing the speed of the voice for Read Aloud." translateable="false">
+      <message name="IDS_READING_MODE_VOICE_SPEED" desc="Accessibility label for button that opens a dropdown with options for changing the speed of the voice for Read Aloud.">
         Voice speed
       </message>
-      <message name="IDS_READING_MODE_VOICE_SELECTION" desc="Accessibility label for button that opens a dropdown with options for changing the voice used for Read Aloud." translateable="false">
+      <message name="IDS_READING_MODE_VOICE_SELECTION" desc="Accessibility label for button that opens a dropdown with options for changing the voice used for Read Aloud.">
         Voice selection
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU" desc="Label for a button that opens a dialog with options for managing language preferences for Read Aloud.">
+        Languages...
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_TITLE" desc="Dialog title label for a dialog with options for managing language preferences for Read Aloud.">
+        Languages
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_CLOSE" desc="Label for a button to close a dialog with options for managing language preferences for Read Aloud.">
+        Close
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_SEARCH_LABEL" desc="Label for a search field that searches for language preference to be managed for Read Aloud.">
+        Search
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_SEARCH_CLEAR" desc="Accessibility label for a button to clear search field that searches for language preference to be managed for Read Aloud.">
+        Clear search
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_DOWNLOADING" desc="Label for status text when a voice is downloading from the Read Aloud language menu.">
+        Downloading voices...
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_VOICES_UNAVAILABLE" desc="Label for status text when a voice attempted to be downloaded from the Read Aloud language menu is unavailable.">
+        Some Brave voices may not be available right now
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_NO_INTERNET" desc="Label for status text when no internet prevents a voice from downloading from the Read Aloud language menu.">
+        No internet
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_NO_SPACE" desc="Label for status text when no space on disk prevents a voice from downloading from the Read Aloud language menu.">
+        To install this language, clear space on your device
+      </message>
+      <message name="IDS_READING_MODE_LANGUAGE_MENU_NO_SPACE_BUT_VOICES_EXIST" desc="Label for status text when no space on disk prevents a voice from downloading from the Read Aloud language menu but there are already installed voices for the language.">
+        For higher quality voices, clear space on your device
+      </message>
+      <message name="IDS_READING_MODE_VOICE_DOWNLOADED_TITLE" desc="Title for a notification to alert the user that a high quality TTS voice data file has been downloaded.">
+        High-quality <ph name="LANGUAGE">$1<ex>English</ex></ph> voice files downloaded
+      </message>
+      <message name="IDS_READING_MODE_VOICE_DOWNLOADED_MESSAGE" desc="Message for a notification to alert the user that a high quality TTS voice data file has been downloaded.">
+        Voice files are shared among users to save disk space
       </message>
       <message name="IDS_READING_MODE_SIDE_PANEL_PROMO" desc="Text for the in-product-help bubble shown for the reading mode bubble.">
         To show a simplified view of this page, open the side panel and select Reading mode
@@ -8724,10 +8808,10 @@ Keep your key file in a safe place. You will need it to create new versions of y
       <message name="IDS_READING_MODE_SIDE_PANEL_PROMO_PINNING" desc="Text for the in-product-help bubble shown for the reading mode bubble when Side Panel Pinning is enabled.">
         To see a simplified view of this page, go to More Tools &gt; Reading Mode
       </message>
-     <message name="IDS_READING_MODE_VOICE_PREVIEW_STRING" desc="Message to be played when a user previews a voice for Read Aloud." translateable="false">
+     <message name="IDS_READING_MODE_VOICE_PREVIEW_STRING" desc="Message to be played when a user previews a voice for Read Aloud.">
         Hi. This is a preview
       </message>
-     <message name="IDS_READING_MODE_FONT_LOADING_STRING" desc="Text added to a font name in the Reading Mode font dropdown when the font style hasn't loaded yet." translateable="false">
+     <message name="IDS_READING_MODE_FONT_LOADING_STRING" desc="Text added to a font name in the Reading Mode font dropdown when the font style hasn't loaded yet.">
          (loading)
       </message>
 
@@ -10039,20 +10123,20 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Brave P
         </message>
       </if>
 
-      <!-- Clear Browsing Data -->
+      <!-- Delete Browsing Data -->
       <message name="IDS_CLEAR_BROWSING_DATA_TITLE" desc="Dialog title">
-        Clear browsing data
+        Delete browsing data
       </message>
       <message name="IDS_CLEAR_BROWSING_DATA_HISTORY_NOTICE" desc="A dialog informing the user that their Brave browsing history was deleted, but other forms of history can still be found on Brave My Activity.">
         The selected data has been removed from Brave and synced devices. Your Brave sync chain may have other forms of browsing history like searches and activity from other Brave services at <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>myactivity.google.com<ph name="END_LINK">&lt;/a&gt;</ph>.
       </message>
       <message name="IDS_CLEAR_BROWSING_DATA_HISTORY_NOTICE_TITLE" desc="Title of a dialog that informs the user that the deletion of Brave's browsing data has been completed.">
-        Cleared Brave data
+        Deleted Brave data
       </message>
       <message name="IDS_CLEAR_BROWSING_DATA_HISTORY_NOTICE_OK" desc="Button in a dialog that informs the user that the deletion of Brave's browsing data has been completed.">
         Ok, got it
       </message>
-      <!-- TODO(crbug.com/1099260): Add proper strings and make them translateable. -->
+      <!-- TODO(crbug.com/40137391): Add proper strings and make them translateable. -->
       <message name="IDS_CLEAR_BROWSING_DATA_PASSWORDS_NOTICE" desc="Body text of a dialog informing the user that some of their passwords were not successfully deleted." translateable="false">
         We were not able to delete all passwords stored in your Brave sync chain. Try again or visit <ph name="BEGIN_LINK">&lt;a target="_blank" href="$1"&gt;</ph>passwords.google.com<ph name="END_LINK">&lt;/a&gt;</ph>.
       </message>
@@ -10559,7 +10643,7 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Brave P
         Dismiss
       </message>
       <message name="IDS_TAB_ORGANIZATION_NEW_TABS" desc="The label for the new badge divider in the tab organization results state">
-        NEW TABS
+        New Tabs
       </message>
       <message name="IDS_TAB_ORGANIZATION_NOT_STARTED_TITLE" desc="The header text for the not started state in the tab organization UI">
         Check if tabs can be organized
@@ -10619,7 +10703,7 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Brave P
         Sign in to let Brave suggest tab groups
       </message>
       <message name="IDS_TAB_ORGANIZATION_IN_PROGRESS_TITLE" desc="The header text for the in progress state in the tab organization UI">
-        Organizing into a tab group…
+        Grouping your tabs…
       </message>
       <message name="IDS_TAB_ORGANIZATION_SUCCESS_TITLE" desc="The header text for the MVP success state in the tab organization UI">
         Tab group suggestion
@@ -10722,6 +10806,9 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Brave P
       </if>
 
       <!-- Saved Tab Group V2 -->
+      <message name="IDS_TABS_TITLE_CXMENU" desc="The label of the 'Tabs' title in the context menu of a saved tab group.">
+        Tabs
+      </message>
       <if expr="not use_titlecase">
         <message name="IDS_SAVED_TAB_GROUP_TABS_COUNT" desc="Title of unnamed saved tab group in Everything menu. [ICU_Syntax]">
           {NUM_TABS, plural, =1 {1 tab} other {# tabs}}
@@ -10729,6 +10816,9 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Brave P
         <message name="IDS_CREATE_NEW_TAB_GROUP" desc="The label of item in Everything menu to create a new tab group.">
           Create new tab group
         </message>
+        <message name="IDS_SAVED_TAB_GROUPS_MENU" desc="The title of the 'Tab groups' menu in the App Menu.">
+      Tab groups
+    </message>
       </if>
       <if expr="use_titlecase">
         <message name="IDS_SAVED_TAB_GROUP_TABS_COUNT" desc="In Title Case: Title of unnamed saved tab group in Everything menu. [ICU_Syntax]">
@@ -10737,6 +10827,9 @@ Check your passwords anytime in <ph name="GOOGLE_PASSWORD_MANAGER">$1<ex>Brave P
         <message name="IDS_CREATE_NEW_TAB_GROUP" desc="The label of item in Everything menu to create a new tab group.">
           Create New Tab Group
         </message>
+        <message name="IDS_SAVED_TAB_GROUPS_MENU" desc="The title of the 'Tab Groups' menu in the App Menu.">
+      Tab Groups
+    </message>
       </if>
 
       <!-- Tab Group Editor Bubble -->
@@ -13979,15 +14072,6 @@ Please help our engineers fix this problem. Tell us what happened right before y
       <message name="IDS_DESKTOP_MEDIA_PICKER_TEXT_DELEGATED" desc="Text for the window picker dialog shown when desktop capture is requested by an app to be used by a tab.">
         <ph name="APP_NAME">$1<ex>Brave Hangouts</ex></ph> wants to share the contents of your screen with <ph name="TARGET_NAME">$2<ex>https://google.com</ex></ph>.
       </message>
-      <message name="IDS_DESKTOP_MEDIA_PICKER_AUDIO_SHARE_SCREEN" desc="Text for the checkbox on the window picker dialog which is displayed when attempting to share a screen. In that case, when checked, system audio will be shared; otherwise only video.">
-        Share system audio
-      </message>
-      <message name="IDS_DESKTOP_MEDIA_PICKER_AUDIO_SHARE_WINDOW" desc="Text for the checkbox on the window picker dialog which is displayed when attempting to share a window. In that case, when checked, window audio will be shared; otherwise only video.">
-        Share window audio
-      </message>
-      <message name="IDS_DESKTOP_MEDIA_PICKER_AUDIO_SHARE_TAB" desc="Text for the checkbox on the window picker dialog which is displayed when attempting to share a tab. In that case, when checked, tab audio will be shared; otherwise only video.">
-        Share tab audio
-      </message>
       <message name="IDS_DESKTOP_MEDIA_PICKER_AUDIO_SHARE_SCREEN_WITH_MUTE_WARNING" desc="Text for the checkbox on the window picker dialog which is displayed when attempting to share a screen, if local audio playback will be suppressed while capturing audio. In that case, when checked, system audio will be shared, and the local audio playback suppressed; otherwise only video will be shared, and local audio playback will not be suppressed.">
         Also share system audio. This device will be muted to prevent feedback.
       </message>
@@ -15393,14 +15477,26 @@ Please help our engineers fix this problem. Tell us what happened right before y
       <message name="IDS_WEBAUTHN_SOURCE_CHROME_PROFILE" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in the user's Brave Profile.">
         From your Brave profile
       </message>
+      <message name="IDS_WEBAUTHN_SOURCE_CHROME_PROFILE_NEW" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in the user's Brave Profile.">
+        Your Brave profile
+      </message>
       <message name="IDS_WEBAUTHN_SOURCE_ICLOUD_KEYCHAIN" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in the user's iCloud Keychain.">
         From iCloud Keychain
+      </message>
+      <message name="IDS_WEBAUTHN_SOURCE_ICLOUD_KEYCHAIN_NEW" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in the user's iCloud Keychain.">
+        iCloud Keychain
       </message>
       <message name="IDS_WEBAUTHN_SOURCE_CUSTOM_VENDOR" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in a third party passkey provider identified by VENDOR_NAME.">
         From "<ph name="VENDOR_NAME">$1<ex>Dashlane</ex></ph>"
       </message>
       <message name="IDS_WEBAUTHN_SOURCE_WINDOWS_HELLO" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in Windows Hello.">
         From Windows Hello
+      </message>
+      <message name="IDS_WEBAUTHN_SOURCE_WINDOWS_HELLO_NEW" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in Windows Hello.">
+        Windows Hello
+      </message>
+      <message name="IDS_WEBAUTHN_SOURCE_GOOGLE_PASSWORD_MANAGER" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in Brave Password Manager.">
+        Brave Password Manager
       </message>
       <message name="IDS_WEBAUTHN_SOURCE_PHONE" desc="The subtitle shown in a button that lets the user select a passkey to sign in, indicating that the passkey resides in their phone.">
         From "<ph name="PHONE_NAME">$1<ex>Pixel 7</ex></ph>"
@@ -15463,9 +15559,9 @@ Please help our engineers fix this problem. Tell us what happened right before y
       Close Private
     </message>
 
-    <!-- Private Clear Browsing Data dialog bubble. -->
-    <message name="IDS_INCOGNITO_CLEAR_BROWSING_DATA_DIALOG_PRIMARY_TEXT" desc="The primary text of the clear browsing data dialog which is shown in Private when users invokes a clear browsing data action in Private. The text describes how Private users can clear the browsing data by closing all Private windows.">
-      To clear data, close all Private windows
+    <!-- Private Delete Browsing Data dialog bubble. -->
+    <message name="IDS_INCOGNITO_CLEAR_BROWSING_DATA_DIALOG_PRIMARY_TEXT" desc="The primary text of the delete browsing data dialog which is shown in Private when users invokes a delete browsing data action in Private. The text describes how Private users can delete the browsing data by closing all Private windows.">
+      To delete data, close all Private windows
     </message>
     <message name="IDS_INCOGNITO_CLEAR_BROWSING_DATA_DIALOG_SECONDARY_TEXT" desc="The secondary text of the clear browsing data dialog which is shown in Private when users invokes a clear browsing data action in Private. The text describes how the clear browsing data action affects only the Private windows.">
       This only affects Private windows
@@ -15474,12 +15570,12 @@ Please help our engineers fix this problem. Tell us what happened right before y
       Close windows
     </message>
 
-<!-- Private History Disclaimer dialog bubble. -->
-      <message name="IDS_INCOGNITO_HISTORY_BUBBLE_PRIMARY_TEXT" desc="Header in bubble view that states visited sites aren't saved in Private mode.">
+  <!-- Private History Disclaimer dialog bubble. -->
+  <message name="IDS_INCOGNITO_HISTORY_BUBBLE_PRIMARY_TEXT" desc="Header in bubble view that states visited sites aren't saved in Private mode.">
     Sites you visit aren’t saved in Private
   </message>
-  <message name="IDS_INCOGNITO_HISTORY_BUBBLE_SECONDARY_TEXT" desc="Description in bubble view that states closing all Private tabs is necessary to clear Private browsing history from the device,">
-    To clear Private browsing history from your device, close all Private tabs
+  <message name="IDS_INCOGNITO_HISTORY_BUBBLE_SECONDARY_TEXT" desc="Description in bubble view that states closing all Private tabs is necessary to delete Private browsing history from the device,">
+    To delete Private browsing history from your device, close all Private tabs
   </message>
   <message name="IDS_INCOGNITO_HISTORY_BUBBLE_CLOSE_INCOGNITO_BUTTON_TEXT" desc="Text of button in bubble view for calling to the close all private tabs action.">
     Close Private
@@ -15756,12 +15852,12 @@ Please help our engineers fix this problem. Tell us what happened right before y
 
     <!-- App uninstall prompt for non-Brave -->
     <message name="IDS_APP_UNINSTALL_PROMPT_REMOVE_DATA_CHECKBOX_FOR_NON_GOOGLE" desc="Checkbox text to ask the user whether they want to remove associated data at uninstall time. Only used when uninstalling an app associated with a particular website.">
-      Also clear browsing data (<ph name="URL">$1<ex>pinterest.com</ex></ph>) which will sign you out of <ph name="DOMAIN">$2<ex>Pinterest.com</ex></ph>. <ph name="LEARN_MORE">$3<ex>Learn more</ex></ph>
+      Also delete browsing data (<ph name="URL">$1<ex>pinterest.com</ex></ph>) which will sign you out of <ph name="DOMAIN">$2<ex>Pinterest.com</ex></ph>.<ph name="LEARN_MORE">$3<ex>Learn more</ex></ph>
     </message>
 
     <!-- App uninstall prompt for Brave -->
     <message name="IDS_APP_UNINSTALL_PROMPT_REMOVE_DATA_CHECKBOX_FOR_GOOGLE" desc="Checkbox text to ask the user whether they want to remove associated data at uninstall time for Brave hostnames. Only used when uninstalling an app associated with a Brave hostname.">
-      Also clear browsing data (<ph name="URL">$1<ex>www.google.com</ex></ph>) which may sign you out of Brave.com. <ph name="LEARN_MORE">$2<ex>Learn more</ex></ph>
+      Also delete browsing data (<ph name="URL">$1<ex>www.google.com</ex></ph>) which may sign you out of Brave.com. <ph name="LEARN_MORE">$2<ex>Learn more</ex></ph>
     </message>
 
     <message name="IDS_APP_UNINSTALL_PROMPT_LEARN_MORE" desc="The label that the user can click to learn more about removing associated data at uninstall time.">
