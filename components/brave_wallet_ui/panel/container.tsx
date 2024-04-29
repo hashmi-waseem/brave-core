@@ -116,9 +116,10 @@ function Container() {
   const { data: addTokenRequests = [] } =
     useGetPendingTokenSuggestionRequestsQuery()
 
-  const selectedPendingTransaction = useSelectedPendingTransaction()
+  const { selectedPendingTransaction, isLoading: isLoadingPendingTx } =
+    useSelectedPendingTransaction()
 
-  if (!hasInitialized) {
+  if (!hasInitialized || isLoadingPendingTx) {
     return (
       <PanelWrapper
         width={390}

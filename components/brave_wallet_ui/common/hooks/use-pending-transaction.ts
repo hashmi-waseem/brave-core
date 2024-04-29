@@ -77,7 +77,7 @@ export const useSelectedPendingTransaction = () => {
   )
 
   // queries
-  const { pendingTransactions } = usePendingTransactionsQuery({
+  const { pendingTransactions, isLoading } = usePendingTransactionsQuery({
     accountId: null,
     chainId: null,
     coinType: null
@@ -91,7 +91,7 @@ export const useSelectedPendingTransaction = () => {
       ) ?? pendingTransactions[0]
 
   // render
-  return selectedPendingTransaction
+  return { selectedPendingTransaction, isLoading }
 }
 
 export const usePendingTransactions = () => {
