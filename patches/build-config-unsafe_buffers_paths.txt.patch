@@ -1,13 +1,14 @@
 diff --git a/build/config/unsafe_buffers_paths.txt b/build/config/unsafe_buffers_paths.txt
-index b7319dcb74bea5e91aa63b189e5e645d9e6d1f04..b432500cb10b835d011284aab08f60a3a60dddf5 100644
+index 0c576c7e62d41ce441fbfc5a5d9a742ea36e05ec..b602e447057ccd6e1f6387f0a9b0e264d7b9484d 100644
 --- a/build/config/unsafe_buffers_paths.txt
 +++ b/build/config/unsafe_buffers_paths.txt
-@@ -55,6 +55,8 @@
- +base/unsafe_buffers_unittest.cc
- +base/unsafe_buffers_nocompile.nc
+@@ -50,6 +50,9 @@
+ #
+ # See `docs/unsafe_buffers.md`.
  
 +-brave/
 +-src/
- -build/
- -build_overrides/
- -buildtools/
++
+ -android_webview/
+ -apps/
+ -ash/
