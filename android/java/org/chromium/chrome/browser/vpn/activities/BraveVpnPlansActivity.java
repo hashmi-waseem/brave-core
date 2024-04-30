@@ -45,6 +45,7 @@ public class BraveVpnPlansActivity extends BraveVpnParentActivity {
     private LinearLayout mYearlySelectorLayout;
     private TextView mYearlySubscriptionAmountText;
     private TextView mRemovedValueText;
+    private TextView mYearlyText;
 
     private Button mBtnVpnPlanAction;
 
@@ -122,6 +123,7 @@ public class BraveVpnPlansActivity extends BraveVpnParentActivity {
 
         mYearlySubscriptionAmountText = findViewById(R.id.yearly_subscription_amount_text);
         mYearlySelectorLayout = findViewById(R.id.yearly_selector_layout);
+        mYearlyText = findViewById(R.id.yearly__text);
 
         mBtnVpnPlanAction = findViewById(R.id.vpn_plan_action_button);
         mBtnVpnPlanAction.setOnClickListener(

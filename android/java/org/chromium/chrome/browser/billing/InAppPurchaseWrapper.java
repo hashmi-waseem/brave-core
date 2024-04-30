@@ -532,6 +532,24 @@ public class InAppPurchaseWrapper {
         return null;
     }
 
+    public double getYearlyDiscountPercentage(
+            ProductDetails monthlyProductDetails, ProductDetails yearlyProductDetails) {
+        ProductDetails.PricingPhase monthlyPricingPhase = getPricingPhase(yearlyProductDetails);
+        ProductDetails.PricingPhase yearlyPricingPhase = getPricingPhase(yearlyProductDetails);
+        if (monthlyPricingPhase != null && yearlyPricingPhase != null) {
+            double yearlyPrice =
+                    ((double) monthlyPricingPhase.getPriceAmountMicros() / MICRO_UNITS) * 12;
+            double yearlyActualPrice =
+                    ((double) yearlyPricingPhase.getPriceAmountMicros() / MICRO_UNITS);
+            if (yearlyPrice == 0) {
+                return null;
+            }
+            double percentage = (yearlyActualPrice * 100) / yearlyPrice;
+            return Math.floor(percentage);
+        }
+        return null;
+    }
+
     private void showToast(String message) {
         Context context = ContextUtils.getApplicationContext();
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
