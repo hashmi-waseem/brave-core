@@ -434,6 +434,11 @@ void ConfirmationQueue::Migrate(mojom::DBTransactionInfo* transaction,
       MigrateToV36(transaction);
       break;
     }
+
+    case 38: {
+      MigrateToV38(transaction);
+      break;
+    }
   }
 }
 
@@ -468,6 +473,15 @@ void ConfirmationQueue::MigrateToV36(
 
   // Optimize database query for `GetNext`.
   CreateTableIndex(transaction, GetTableName(), /*columns=*/{"process_at"});
+}
+
+void ConfirmationQueue::MigrateToV38(
+    mojom::DBTransactionInfo* transaction) const {
+  CHECK(transaction);
+
+  // The conversion queue is deprecated since all confirmations are now being
+  // added to the confirmation queue.
+  DropTable(transaction, "conversion_queue");
 }
 
 void ConfirmationQueue::InsertOrUpdate(
