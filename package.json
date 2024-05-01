@@ -88,7 +88,7 @@
     "@testing-library/react-hooks": "7.0.2",
     "@types/array-move": "2.0.0",
     "@types/async": "3.2.20",
-    "@types/chrome": "0.0.241",
+    "@types/chrome": "0.0.267",
     "@types/dom-navigation": "1.0.3",
     "@types/jest": "26.0.24",
     "@types/qr-image": "3.2.5",
