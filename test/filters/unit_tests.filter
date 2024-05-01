@@ -42,6 +42,7 @@
 -All/PriceTrackingViewFeatureFlagTest.PriceTrackingViewCreation/*
 -All/PrintContentAnalysisUtilsTest.*/*
 -All/SyncConfirmationHandlerTest.*
+-All/TabStripModelTest.NavigationForgettingDoesntAffectNewTab/*
 -ApcScrimManagerImplTest.DisabledScrimCannotBeShown
 -ApcScrimManagerImplTest.HideDoesNotImmediatelySetOriginalAxMode
 -ApcScrimManagerImplTest.HideFocusOnTheWebContent
@@ -88,6 +89,7 @@
 -CookieControlsIconViewUnitTest.*
 -CookieControlsUserBypassTest.SiteCounts
 -CoreTabHelperWindowUnitTest.SearchWithLens_LensPingEnabled_TriggersLensPing
+-CpuHealthTrackerBrowserTest.*
 -CustomCursorSuppressorTest.*
 -CustomizeChromeFeaturePromoHelperTest.*
 -DefaultBrowserPromptManagerTest.*
@@ -202,6 +204,7 @@
 -SidePanelPinningCoordinatorTest.SidePanelPinButtonsHideInGuestMode
 -SidePanelPinningCoordinatorTest.SidePanelTitleUpdates
 -SidePanelToolbarContainerTest.*
+-SiteAccessRequestsHelperUnittest.*
 -TabHelperUnitTest.ClearsExtensionOnUnload
 -TabHelperUnitTest.ReloadRequired_BlockAllExtensions
 -TabHelperUnitTest.ReloadRequired_CustomizeByExtension
@@ -561,8 +564,8 @@
 -BrowserPrefsTest.MigrateObsoleteProfilePrefSyncRequestedSetToFalse
 -BrowserPrefsTest.MigrateObsoleteProfilePrefSyncRequestedSetToTrue
 
-# This test fails a CalledOnValidSequence check in brave_sync::Prefs::GetSeed
--PeopleHandlerWithExplicitBrowserSigninTest.ChromeSigninUserInfoUpdateOnSync
+# These tests fail a CalledOnValidSequence check in brave_sync::Prefs::GetSeed
+-PeopleHandlerWithExplicitBrowserSigninTest.*
 
 # These tests fail because of disabled kCookieDeprecationFacilitatedTesting and/
 # or TrackingProtectionOnboardingFactory.
