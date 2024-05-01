@@ -1,5 +1,5 @@
 diff --git a/components/permissions/permission_uma_util.cc b/components/permissions/permission_uma_util.cc
-index e48bc182ef8fc0a2d728de87b28d0d221ac971ed..5cf79e67682587d35d357de33a7d8986f4be88c0 100644
+index 2d279b5967593b42a6124c98e1a4f59056075024..032dfb72481cc4a42758650f3692172053b26d7e 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
 @@ -142,6 +142,7 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
@@ -8,5 +8,13 @@ index e48bc182ef8fc0a2d728de87b28d0d221ac971ed..5cf79e67682587d35d357de33a7d8986
        return RequestTypeForUma::PERMISSION_IDENTITY_PROVIDER;
 +    BRAVE_GET_UMA_VALUE_FOR_REQUEST_TYPE
    }
+ }
+ 
+@@ -175,6 +176,7 @@ RequestTypeForUma GetUmaValueForRequests(
+     return RequestTypeForUma::MULTIPLE_KEYBOARD_AND_POINTER_LOCK;
+   }
+ #endif
++  BRAVE_GET_UMA_VALUE_FOR_REQUESTS
+   return RequestTypeForUma::UNKNOWN;
  }
  
