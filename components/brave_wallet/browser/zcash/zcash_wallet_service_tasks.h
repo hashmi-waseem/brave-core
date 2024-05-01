@@ -15,7 +15,8 @@
 #include "brave/components/brave_wallet/common/brave_wallet.mojom.h"
 
 #if BUILDFLAG(ENABLE_ORCHARD)
-#include "brave/components/brave_wallet/zcash/lib.rs.h"
+#include "brave/components/brave_wallet/browser/zcash/rust/lib.rs.h"
+#include "third_party/rust/cxx/v1/cxx.h"
 #endif
 
 namespace brave_wallet {
@@ -134,9 +135,9 @@ class CreateShieldAllTransactionTask {
   void ScheduleWorkOnTask();
 
  private:
-  ::rust::Box<OrchardBuilderResult> CreateOrchardBuilder(
+  ::rust::Box<orchard::OrchardUnauthorizedBundleResult> CreateOrchardUnauthorizedBundle(
       ::rust::Slice<const uint8_t> tree_state,
-      ::rust::Vec<OrchardOutput> outputs);
+      ::rust::Vec<orchard::OrchardOutput> outputs);
   void GetAllUtxos();
   void GetTreeState();
   void GetChainHeight();
