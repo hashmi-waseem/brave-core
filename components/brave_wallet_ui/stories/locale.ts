@@ -847,7 +847,6 @@ provideStrings({
   braveWalletTokenIsVerified: 'This token is verified',
   braveWalletTokenIsVerifiedByLists: 'This token is verified on $1 lists',
   braveWalletSpenderAddress: 'Spender: $1',
-  braveWalletNoChanges: 'No changes',
   braveWalletNoChangesDetected: 'No changes detected',
 
   // Transaction Simulation Warnings
