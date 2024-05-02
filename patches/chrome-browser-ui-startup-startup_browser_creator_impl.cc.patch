@@ -1,12 +1,12 @@
 diff --git a/chrome/browser/ui/startup/startup_browser_creator_impl.cc b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-index 497ba7b735c47ccdc47ea3c85baf236fd9607d91..8083d36a5724ce7b1d255cb0c63f6c860e51d308 100644
+index 497ba7b735c47ccdc47ea3c85baf236fd9607d91..c3c95c568f2e4ccc27d952a879cc4ab005ab5383 100644
 --- a/chrome/browser/ui/startup/startup_browser_creator_impl.cc
 +++ b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-@@ -373,6 +373,7 @@ StartupBrowserCreatorImpl::DetermineURLsAndLaunch(
-         !SessionStartupPref::TypeHasRecommendedValue(profile_->GetPrefs());
-   }
+@@ -524,6 +524,7 @@ StartupBrowserCreatorImpl::DetermineStartupTabs(
+       }
+ #endif
  
-+  BRAVE_STARTUPBROWSERCREATORIMPL_DETERMINEURLSANDLAUNCH
-   const bool whats_new_enabled =
-       whats_new::ShouldShowForState(local_state, promotional_tabs_enabled);
- 
++      BRAVE_STARTUPBROWSERCREATORIMPL_DETERMINEURLSANDLAUNCH
+       // Potentially add the What's New Page. Note that the What's New page
+       // should never be shown in the same session as any first-run onboarding
+       // tabs. It also shouldn't be shown with reset tabs that are required to
