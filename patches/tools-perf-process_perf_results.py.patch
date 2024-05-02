@@ -1,5 +1,5 @@
 diff --git a/tools/perf/process_perf_results.py b/tools/perf/process_perf_results.py
-index a04e192602461a4a1c2a63479fbff6cf7359bdb8..1d4cc09324f8a0a40a9300967e7ca18ca16498ad 100755
+index 41cdaba0f38567cc7ab3e4609c35a20f3ca7899f..b6b1232d2f7eccefe8fbcc080a48fc84b9464476 100755
 --- a/tools/perf/process_perf_results.py
 +++ b/tools/perf/process_perf_results.py
 @@ -41,7 +41,7 @@ except ImportError:
