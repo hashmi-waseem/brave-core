@@ -28,7 +28,7 @@ using api_request_helper::APIRequestResult;
 
 // An AI Chat engine consumer that uses the Claude-style remote HTTP completion
 // API and builds prompts tailored to the Brave Leo model.
-class EngineConsumerLlamaRemote : public EngineConsumerClaudeRemote {
+class EngineConsumerLlamaRemote : public EngineConsumer {
  public:
   explicit EngineConsumerLlamaRemote(
       const mojom::Model& model,
@@ -58,6 +58,13 @@ class EngineConsumerLlamaRemote : public EngineConsumerClaudeRemote {
       GenerationDataCallback received_callback,
       GenerationCompletedCallback completed_callback) override;
   void SanitizeInput(std::string& input) override;
+  void ClearAllQueries() override;
+
+  void SetAPIForTesting(
+      std::unique_ptr<RemoteCompletionClient> api_for_testing) {
+    api_ = std::move(api_for_testing);
+  }
+  RemoteCompletionClient* GetAPIForTesting() { return api_.get(); }
 
  private:
   void OnGenerateQuestionSuggestionsResponse(
@@ -65,6 +72,8 @@ class EngineConsumerLlamaRemote : public EngineConsumerClaudeRemote {
       GenerationResult result);
 
   bool is_mixtral_ = false;
+
+  std::unique_ptr<RemoteCompletionClient> api_ = nullptr;
 
   base::WeakPtrFactory<EngineConsumerLlamaRemote> weak_ptr_factory_{this};
 };

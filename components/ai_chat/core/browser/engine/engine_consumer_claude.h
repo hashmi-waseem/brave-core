@@ -66,13 +66,12 @@ class EngineConsumerClaudeRemote : public EngineConsumer {
   }
   RemoteCompletionClient* GetAPIForTesting() { return api_.get(); }
 
- protected:
-  std::unique_ptr<RemoteCompletionClient> api_ = nullptr;
-
  private:
   void OnGenerateQuestionSuggestionsResponse(
       SuggestedQuestionsCallback callback,
       GenerationResult result);
+
+  std::unique_ptr<RemoteCompletionClient> api_ = nullptr;
 
   base::WeakPtrFactory<EngineConsumerClaudeRemote> weak_ptr_factory_{this};
 };
