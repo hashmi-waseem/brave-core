@@ -10,6 +10,7 @@
 #include "base/logging.h"
 #include "chrome/browser/browser_features.h"
 #include "chrome/browser/companion/core/features.h"
+#include "chrome/browser/flags/android/chrome_feature_list.h"
 #include "chrome/browser/preloading/preloading_features.h"
 #include "chrome/browser/signin/signin_features.h"
 #include "chrome/browser/ui/ui_features.h"
@@ -110,6 +111,9 @@ TEST(FeatureDefaultsTest, DisabledFeatures) {
       &blink::features::kSharedStorageSelectURLLimit,
       &blink::features::kSpeculationRulesPrefetchFuture,
       &blink::features::kTextFragmentAnchor,
+#if BUILDFLAG(IS_ANDROID)
+      &chrome::android::kAdaptiveButtonInTopToolbarCustomizationV2,
+#endif
       &commerce::kCommerceAllowOnDemandBookmarkUpdates,
       &commerce::kCommerceDeveloper,
       &commerce::kCommerceMerchantViewer,
