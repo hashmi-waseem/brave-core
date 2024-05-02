@@ -137,13 +137,14 @@ public class OnboardingBackupWalletFragment extends BaseOnboardingWalletFragment
                         mOnNextPage.onboardingCompleted();
                     }
                 });
-        mBiometricBackupWalletImage.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
-                    && Utils.isBiometricAvailable(getContext())) {
-                showPasswordRelatedControls(false);
-                createBiometricPrompt();
-            }
-        });
+        mBiometricBackupWalletImage.setOnClickListener(
+                v -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
+                            && Utils.isBiometricAvailable(getContext())) {
+                        showPasswordRelatedControls(false);
+                        createBiometricPrompt();
+                    }
+                });
         checkOnBiometric();
     }
 
