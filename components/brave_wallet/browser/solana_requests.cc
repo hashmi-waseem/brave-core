@@ -98,7 +98,16 @@ std::string getAccountInfo(const std::string& pubkey) {
 }
 
 std::string getFeeForMessage(const std::string& message) {
-  return GetJsonRpcString("getFeeForMessage", message);
+  base::Value::List params;
+  params.Append(message);
+
+  base::Value::Dict configuration;
+  configuration.Set("commitment", "confirmed");
+  params.Append(std::move(configuration));
+
+  base::Value::Dict dictionary =
+      GetJsonRpcDictionary("getFeeForMessage", std::move(params));
+  return GetJSON(dictionary);
 }
 
 std::string getBlockHeight() {

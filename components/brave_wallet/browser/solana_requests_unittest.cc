@@ -102,7 +102,7 @@ TEST(SolanaRequestsUnitTest, getAccountInfo) {
 TEST(SolanaRequestsUnitTest, getFeeForMessage) {
   ASSERT_EQ(
       getFeeForMessage("message"),
-      R"({"id":1,"jsonrpc":"2.0","method":"getFeeForMessage","params":["message"]})");
+      R"({"id":1,"jsonrpc":"2.0","method":"getFeeForMessage","params":["message",{"commitment":"confirmed"}]})");
 }
 
 TEST(SolanaRequestsUnitTest, getBlockHeight) {
