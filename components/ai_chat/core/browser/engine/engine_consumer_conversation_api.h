@@ -58,6 +58,8 @@ class EngineConsumerConversationAPI : public EngineConsumer {
       GenerationCompletedCallback completed_callback) override;
   void SanitizeInput(std::string& input) override;
   void ClearAllQueries() override;
+  bool SupportsDeltaTextResponses() const override;
+
 
   void SetAPIForTesting(
       std::unique_ptr<ConversationAPIClient> api_for_testing) {

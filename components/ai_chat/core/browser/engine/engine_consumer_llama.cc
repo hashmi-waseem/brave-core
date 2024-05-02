@@ -333,7 +333,7 @@ EngineConsumerLlamaRemote::EngineConsumerLlamaRemote(
 
 EngineConsumerLlamaRemote::~EngineConsumerLlamaRemote() = default;
 
-void EngineConsumerClaudeRemote::ClearAllQueries() {
+void EngineConsumerLlamaRemote::ClearAllQueries() {
   api_->ClearAllQueries();
 }
 

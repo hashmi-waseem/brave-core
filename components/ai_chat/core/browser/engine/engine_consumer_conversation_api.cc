@@ -149,4 +149,8 @@ void EngineConsumerConversationAPI::SanitizeInput(std::string& input) {
   // Sanitization is handled by the server
 }
 
+bool EngineConsumerConversationAPI::SupportsDeltaTextResponses() const {
+  return true;
+}
+
 }  // namespace ai_chat

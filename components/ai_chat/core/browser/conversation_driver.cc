@@ -19,6 +19,7 @@
 #include "base/notreached.h"
 #include "base/one_shot_event.h"
 #include "base/ranges/algorithm.h"
+#include "base/strings/strcat.h"
 #include "base/strings/string_util.h"
 #include "base/strings/utf_string_conversions.h"
 #include "brave/components/ai_chat/core/browser/ai_chat_metrics.h"
@@ -348,15 +349,23 @@ void ConversationDriver::AddToConversationHistory(mojom::ConversationTurn turn) 
 }
 
 void ConversationDriver::UpdateOrCreateLastAssistantEntry(std::string updated_text) {
-  updated_text = base::TrimWhitespaceASCII(updated_text, base::TRIM_LEADING);
+
   if (chat_history_.empty() ||
       chat_history_.back().character_type != CharacterType::ASSISTANT) {
+    updated_text = base::TrimWhitespaceASCII(updated_text, base::TRIM_LEADING);
     // OnHistoryUpdate will be called by AddToConversationHistory.
     AddToConversationHistory(
         {CharacterType::ASSISTANT, mojom::ActionType::RESPONSE,
          ConversationTurnVisibility::VISIBLE, updated_text, std::nullopt});
   } else {
-    chat_history_.back().text = updated_text;
+    if (engine_->SupportsDeltaTextResponses()) {
+      auto existing = chat_history_.back().text;
+      chat_history_.back().text = base::StrCat({existing, updated_text});
+    } else {
+      updated_text =
+          base::TrimWhitespaceASCII(updated_text, base::TRIM_LEADING);
+      chat_history_.back().text = updated_text;
+    }
     // Trigger an observer update to refresh the UI.
     for (auto& obs : observers_) {
       obs.OnHistoryUpdate();

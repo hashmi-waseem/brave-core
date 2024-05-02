@@ -69,6 +69,8 @@ class EngineConsumer {
 
   virtual void ClearAllQueries() = 0;
 
+  virtual bool SupportsDeltaTextResponses() const;
+
   void SetMaxPageContentLengthForTesting(int max_page_content_length) {
     max_page_content_length_ = max_page_content_length;
   }
