@@ -1,5 +1,5 @@
 diff --git a/build/config/android/rules.gni b/build/config/android/rules.gni
-index a65ed430f2cbeaa21a51b6020f569fff99c56cd9..63c8b93eca6a700da214edef56a6312e129921fd 100644
+index a5032f40eba1387c7a0eb9b6d75dae3dc4f5d4e9..166679ad63decb07688e85c4ba3ab100653a317c 100644
 --- a/build/config/android/rules.gni
 +++ b/build/config/android/rules.gni
 @@ -208,6 +208,7 @@ if (is_robolectric) {

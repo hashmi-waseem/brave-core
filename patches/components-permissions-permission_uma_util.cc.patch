@@ -2,7 +2,7 @@ diff --git a/components/permissions/permission_uma_util.cc b/components/permissi
 index 2d279b5967593b42a6124c98e1a4f59056075024..032dfb72481cc4a42758650f3692172053b26d7e 100644
 --- a/components/permissions/permission_uma_util.cc
 +++ b/components/permissions/permission_uma_util.cc
-@@ -142,6 +142,7 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
+@@ -150,6 +150,7 @@ RequestTypeForUma GetUmaValueForRequestType(RequestType request_type) {
  #endif
      case RequestType::kIdentityProvider:
        return RequestTypeForUma::PERMISSION_IDENTITY_PROVIDER;
