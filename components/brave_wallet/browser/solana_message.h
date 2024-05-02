@@ -88,6 +88,7 @@ class SolanaMessage {
   // https://docs.rs/solana-sdk/1.18.9/src/solana_sdk/transaction/versioned/mod.rs.html#192
   bool UsesDurableNonce() const;
 
+  // Returns whether the priority fee was added.
   bool AddPriorityFee(uint32_t compute_units, uint64_t fee_per_compute_unit);
 
  private:
@@ -98,6 +99,9 @@ class SolanaMessage {
       const std::string& fee_payer,
       const std::vector<SolanaInstruction>& instructions,
       std::vector<SolanaAccountMeta>* unique_account_metas);
+
+  // Returns true if transaction begins with a valid advance nonce instruction.
+  bool UsesPriorityFee() const;
 
   mojom::SolanaMessageVersion version_;
   std::string recent_blockhash_;

@@ -720,6 +720,36 @@ bool SolanaMessage::UsesDurableNonce() const {
   return true;
 }
 
+bool SolanaMessage::UsesPriorityFee() const {
+  if (instructions_.empty()) {
+    return false;
+  }
+
+  auto instruction = instructions_[0];
+
+  // If the first instruction is advance nonce instruction,
+  // use the second instruction.
+  if (solana_ins_data_decoder::GetSystemInstructionType(
+          instruction.data(), instruction.GetProgramId()) ==
+      mojom::SolanaSystemInstruction::kAdvanceNonceAccount) {
+    if (instructions_.size() < 2) {
+      return false;
+    }
+
+    instruction = instructions_[1];
+  }
+
+  auto instruction_type =
+      solana_ins_data_decoder::GetComputeBudgetInstructionType(
+          instruction.data(), instruction.GetProgramId());
+  if (!instruction_type) {
+    return false;
+  }
+
+  return instruction_type ==
+         mojom::SolanaComputeBudgetInstruction::kSetComputeUnitLimit;
+}
+
 bool SolanaMessage::AddPriorityFee(uint32_t compute_units,
                                    uint64_t fee_per_compute_unit) {
   SolanaInstruction modify_compute_units_instruction =
@@ -727,10 +757,14 @@ bool SolanaMessage::AddPriorityFee(uint32_t compute_units,
   SolanaInstruction add_priority_fee_instruction =
       solana::compute_budget_program::SetComputeUnitPrice(fee_per_compute_unit);
 
-  // If the message uses a durable nonce, the first instruction should remain
-  // the advance nonce instruction.
-  // https://solana.com/developers/guides/advanced/how-to-use-priority-fees#special-considerations
+  // Do not add a priority fee if there already is one added.
+  if (UsesPriorityFee()) {
+    return false;
+  }
+
   if (UsesDurableNonce()) {
+    // The first instruction should remain the advance nonce instruction.
+    // https://solana.com/developers/guides/advanced/how-to-use-priority-fees#special-considerations
     instructions_.insert(
         instructions_.begin() + 1,
         {modify_compute_units_instruction, add_priority_fee_instruction});

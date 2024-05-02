@@ -918,4 +918,24 @@ std::optional<mojom::SolanaSystemInstruction> GetSystemInstructionType(
   return DecodeSystemInstructionType(data, offset);
 }
 
+std::optional<mojom::SolanaComputeBudgetInstruction>
+GetComputeBudgetInstructionType(const std::vector<uint8_t>& data,
+                                const std::string& program_id) {
+  if (program_id != mojom::kSolanaComputeBudgetProgramId) {
+    return std::nullopt;
+  }
+
+  if (data.empty()) {
+    return std::nullopt;
+  }
+
+  uint8_t ins_type = data[0];  // First byte is the instruction type
+  if (ins_type >
+      static_cast<uint8_t>(mojom::SolanaComputeBudgetInstruction::kMaxValue)) {
+    return std::nullopt;
+  }
+
+  return static_cast<mojom::SolanaComputeBudgetInstruction>(ins_type);
+}
+
 }  // namespace brave_wallet::solana_ins_data_decoder
