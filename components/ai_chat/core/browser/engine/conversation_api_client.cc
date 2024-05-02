@@ -44,11 +44,14 @@ net::NetworkTrafficAnnotationTag GetNetworkTrafficAnnotationTag() {
         sender: "AI Chat"
         description:
           "This is used to communicate with Brave's AI Conversation API"
-          "on behalf of the user interacting with the ChatUI."
+          "on behalf of the user interacting with different browser AI"
+          "features."
         trigger:
-          "Triggered by user sending a prompt."
+          "Triggered by user interactions such as submitting an AI Chat"
+          "conversation message, or requesting a text rewrite."
         data:
-          "Will generate a text that attempts to match the user gave it"
+          "Conversational messages input by the user as well as associated"
+          "content or user text to be rewritten. Can contain PII."
         destination: WEBSITE
       }
       policy {
