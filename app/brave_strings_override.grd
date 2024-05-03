@@ -407,6 +407,8 @@ Permissions you've already given to websites and apps may apply to this account.
           </if>
       </if>
 
-      </messages>
+      <if expr="not is_android and not is_chromeos">
+        </if>
+    </messages>
   </release>
 </grit>
