@@ -122,11 +122,23 @@ TEST(SolanaInstructionBuilderUnitTest, CreateAssociatedTokenAccount) {
 namespace compute_budget_program {
 
 TEST(SolanaInstructionBuilderUnitTest, SetComputeUnitLimit) {
-  // TODO(nvonpentz)
+  auto instruction = SetComputeUnitLimit(1);
+  EXPECT_EQ(instruction, SolanaInstruction(mojom::kSolanaComputeBudgetProgramId,
+                                           {}, {2, 1, 0, 0, 0}));
+
+  instruction = SetComputeUnitLimit(99);
+  EXPECT_EQ(instruction, SolanaInstruction(mojom::kSolanaComputeBudgetProgramId,
+                                           {}, {2, 99, 0, 0, 0}));
 }
 
 TEST(SolanaInstructionBuilderUnitTest, SetComputeUnitPrice) {
-  // TODO(nvonpentz)
+  auto instruction = SetComputeUnitPrice(1);
+  EXPECT_EQ(instruction, SolanaInstruction(mojom::kSolanaComputeBudgetProgramId,
+                                           {}, {3, 1, 0, 0, 0, 0, 0, 0, 0}));
+
+  instruction = SetComputeUnitPrice(99);
+  EXPECT_EQ(instruction, SolanaInstruction(mojom::kSolanaComputeBudgetProgramId,
+                                           {}, {3, 99, 0, 0, 0, 0, 0, 0, 0}));
 }
 
 }  // namespace compute_budget_program

@@ -178,8 +178,6 @@ std::optional<SolanaInstruction> CreateAssociatedTokenAccount(
 namespace compute_budget_program {
 
 SolanaInstruction SetComputeUnitLimit(uint32_t units) {
-  // TODO(nvonpentz) Confirm u8 is the correct type for the instruction
-  // discriminator
   std::vector<uint8_t> instruction_data = {static_cast<uint8_t>(
       mojom::SolanaComputeBudgetInstruction::kSetComputeUnitLimit)};
 
@@ -187,14 +185,11 @@ SolanaInstruction SetComputeUnitLimit(uint32_t units) {
   UintToLEBytes(units, &units_bytes);
   instruction_data.insert(instruction_data.end(), units_bytes.begin(),
                           units_bytes.end());
-
   return SolanaInstruction(mojom::kSolanaComputeBudgetProgramId, {},
                            instruction_data);
 }
 
 SolanaInstruction SetComputeUnitPrice(uint64_t price) {
-  // TODO(nvonpentz) Confirm u8 is the correct type for the instruction
-  // discriminator
   std::vector<uint8_t> instruction_data = {static_cast<uint8_t>(
       mojom::SolanaComputeBudgetInstruction::kSetComputeUnitPrice)};
 
