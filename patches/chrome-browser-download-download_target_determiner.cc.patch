@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/download/download_target_determiner.cc b/chrome/browser/download/download_target_determiner.cc
-index 36b2f5fc9b8ca73c081b47f1e22d4462c960a447..b3a8ee85029d25e78b2eaae95d23e8d935320d80 100644
+index a2bff43f3a1a4989abb9425e3cc39966c3962f42..3a845c2ba6c31ab4ce9040ae549bbfa4703dd397 100644
 --- a/chrome/browser/download/download_target_determiner.cc
 +++ b/chrome/browser/download/download_target_determiner.cc
-@@ -1275,6 +1275,7 @@ DownloadFileType::DangerLevel DownloadTargetDeterminer::GetDangerLevel(
+@@ -1274,6 +1274,7 @@ DownloadFileType::DangerLevel DownloadTargetDeterminer::GetDangerLevel(
        download_->GetDownloadSource() != download::DownloadSource::DRAG_AND_DROP;
    if (HasPromptedForPath() ||
        confirmation_reason_ != DownloadConfirmationReason::NONE ||
@@ -10,7 +10,7 @@ index 36b2f5fc9b8ca73c081b47f1e22d4462c960a447..b3a8ee85029d25e78b2eaae95d23e8d9
        user_approved_path) {
      return DownloadFileType::NOT_DANGEROUS;
    }
-@@ -1314,6 +1315,7 @@ DownloadFileType::DangerLevel DownloadTargetDeterminer::GetDangerLevel(
+@@ -1313,6 +1314,7 @@ DownloadFileType::DangerLevel DownloadTargetDeterminer::GetDangerLevel(
          ui::PAGE_TRANSITION_FROM_ADDRESS_BAR) != 0 ||
         (download_->HasUserGesture() && visits == VISITED_REFERRER)))
      return DownloadFileType::NOT_DANGEROUS;

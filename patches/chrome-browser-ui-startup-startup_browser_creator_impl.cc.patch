@@ -1,8 +1,8 @@
 diff --git a/chrome/browser/ui/startup/startup_browser_creator_impl.cc b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-index 497ba7b735c47ccdc47ea3c85baf236fd9607d91..c3c95c568f2e4ccc27d952a879cc4ab005ab5383 100644
+index 3236f6469951e0001bb14651c98c4e76a5667d00..d0238174c42a40d64688279637c095c5bea833dd 100644
 --- a/chrome/browser/ui/startup/startup_browser_creator_impl.cc
 +++ b/chrome/browser/ui/startup/startup_browser_creator_impl.cc
-@@ -524,6 +524,7 @@ StartupBrowserCreatorImpl::DetermineStartupTabs(
+@@ -529,6 +529,7 @@ StartupBrowserCreatorImpl::DetermineStartupTabs(
        }
  #endif
  

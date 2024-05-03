@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/ui/views/frame/browser_view_layout.cc b/chrome/browser/ui/views/frame/browser_view_layout.cc
-index 07bc84fe5ed23356dadda5ee943107d7621037cf..6730c5d74871abe70ed944a4413fa4641ceae38e 100644
+index a7f0ff7ce857eab523a3b163d8d3a0f8c3f081e9..57ca9c90f6d76f2ba51fc8a8036733adfd6413ae 100644
 --- a/chrome/browser/ui/views/frame/browser_view_layout.cc
 +++ b/chrome/browser/ui/views/frame/browser_view_layout.cc
 @@ -68,6 +68,7 @@ bool ConvertedHitTest(views::View* src, views::View* dst, gfx::Point* point) {

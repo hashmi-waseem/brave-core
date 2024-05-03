@@ -1,8 +1,8 @@
 diff --git a/third_party/polymer/v3_0/BUILD.gn b/third_party/polymer/v3_0/BUILD.gn
-index 92661994042e56c968a5f205778e4fdd43921bbb..3c765c41f4b2e949e4ac4128860626323911349f 100644
+index 4f7d02ba26d8df9f5c729e72b411eb8d37974af6..1b34818ba87bda977c7fc85fce40b7c60fae99ae 100644
 --- a/third_party/polymer/v3_0/BUILD.gn
 +++ b/third_party/polymer/v3_0/BUILD.gn
-@@ -44,6 +44,7 @@ js_files = [
+@@ -43,6 +43,7 @@ js_files = [
  ]
  
  if (is_chromeos_ash) {
@@ -10,7 +10,7 @@ index 92661994042e56c968a5f205778e4fdd43921bbb..3c765c41f4b2e949e4ac412886062632
    js_files += [
      "iron-a11y-announcer/iron-a11y-announcer.js",
      "iron-dropdown/iron-dropdown.js",
-@@ -170,6 +171,7 @@ ts_library("library") {
+@@ -169,6 +170,7 @@ ts_library("library") {
    ]
  
    if (is_chromeos_ash) {

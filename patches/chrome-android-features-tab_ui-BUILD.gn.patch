@@ -1,8 +1,8 @@
 diff --git a/chrome/android/features/tab_ui/BUILD.gn b/chrome/android/features/tab_ui/BUILD.gn
-index 662ba7cf55c62dbe91e803f352c90a08b02ea87f..d8fd85411914074248055c2117d8ab3c976d1651 100644
+index ff4b8a6542378a2597f05d40448eeb3ab5c10bd9..e089c992f94038114667e3fe8d8b79875633a37d 100644
 --- a/chrome/android/features/tab_ui/BUILD.gn
 +++ b/chrome/android/features/tab_ui/BUILD.gn
-@@ -102,6 +102,7 @@ android_resources("java_resources") {
+@@ -103,6 +103,7 @@ android_resources("java_resources") {
      "java/res/values/styles.xml",
      "java/res/xml/tabs_settings.xml",
    ]
