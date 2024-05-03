@@ -617,7 +617,7 @@ const util = {
     const buildArgsStr = util.buildArgsToString(gnArgs)
     util.run('gn', ['gen', config.nativeRedirectCCDir, '--args="' + buildArgsStr + '"'], options)
 
-    util.buildTarget('brave/tools/redirect_cc', mergeWithDefault({outputDir: config.nativeRedirectCCDir}))
+    util.buildTarget(['brave/tools/redirect_cc'], mergeWithDefault({outputDir: config.nativeRedirectCCDir}))
     Log.progressFinish('build redirect_cc')
   },
 
@@ -661,9 +661,10 @@ const util = {
     })
   },
 
-  buildTarget: (target = config.buildTarget, options = config.defaultOptions) => {
+  buildTarget: (targets = config.buildTargets, options = config.defaultOptions) => {
+    assert(Array.isArray(targets))
     const buildId = crypto.randomUUID()
-    const progressMessage = `build ${target} (${config.buildConfig}, id=${buildId})`
+    const progressMessage = `build ${targets} (${config.buildConfig}, id=${buildId})`
     Log.progressStart(progressMessage)
 
     let num_compile_failure = 1
@@ -671,7 +672,7 @@ const util = {
       num_compile_failure = 0
 
     let ninjaOpts = [
-      '-C', options.outputDir || config.outputDir, target,
+      '-C', options.outputDir || config.outputDir, targets.join(' '),
       '-k', num_compile_failure,
       ...config.extraNinjaOpts
     ]

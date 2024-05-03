@@ -68,9 +68,9 @@ const buildTests = (suite, buildConfig = config.defaultBuildConfig, options = {}
     'brave_network_audit_tests',
   ]
   if (testSuites.includes(suite)) {
-    config.buildTarget = 'brave/test:' + suite
+    config.buildTargets = ['brave/test:' + suite]
   } else {
-    config.buildTarget = suite
+    config.buildTargets = [suite]
   }
   util.touchOverriddenFiles()
   util.touchGsutilChangeLogFile()
