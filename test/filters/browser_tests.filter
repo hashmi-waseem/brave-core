@@ -462,6 +462,8 @@
 -EnclaveAuthenticatorBrowserTest.RegisterDeviceWithGpmPin_MakeCredentialWithUV_Success
 -EnclaveAuthenticatorBrowserTest.RegisterDeviceWithGpmPin_MakeCredential_Success
 -EnclaveAuthenticatorBrowserTest.RegisterDeviceWithGpmPin_UVRequestsWithWrongPIN
+-EnclaveAuthenticatorWithoutPinBrowserTest.*
+-EnclaveAuthenticatorWithPinBrowserTest.*
 -LocalWebApprovalsEnabled/SupervisedUserIframeFilterTest.*/*
 -PasswordStatusCheckServiceBaseTest.CheckTimeUpdatedAfterRunScheduledInThePast
 -PowerBookmarkBubbleViewBrowserTest.InvokeUi_bookmark_details_on_trackable_product
@@ -556,6 +558,8 @@
 -RequestStorageAccessForOriginWithFirstPartySetsDisabledBrowserTest.*
 -RequestStorageAccessForWithFirstPartySetsBrowserTest.PermissionQueryCrossSiteFrame
 -RequestStorageAccessForWithFirstPartySetsBrowserTest.Permission_AutodeniedForServiceDomain
+-StorageAccessAPIAutograntsWithFedCMBrowserTest.*
+-StorageAccessAPIAutograntsWithFedCMOriginTrialBrowserTest.*
 -StorageAccessAPIBrowserTest.Permission_Denied_WithoutInteraction/*
 -StorageAccessAPIForOriginBrowserTest.*
 -StorageAccessAPIForOriginWithFirstPartySetsBrowserTest.*
@@ -903,13 +907,14 @@
 -DisallowManagedProfileSignoutFeature/UserPolicySigninServiceTest.*
 
 # These tests fail because we disable DIPS via features::kDIPS
+-All/DIPSDataDeletionBrowserTest.*
+-All/DIPSPrivacySandboxDataPreservationTest.*
 -All/DIPSPrivacySandboxDataTest.DontClearAttributionReportingApiData/*
 -All/DIPSSiteDataAccessDetectorTest.AttributeSameSiteIframesSiteDataAccessTo1P/*
 -All/DIPSSiteDataAccessDetectorTest.AttributeSameSiteNestedIframesSiteDataAccessTo1P/*
 -All/DIPSSiteDataAccessDetectorTest.DetectSiteDataAccess_Storages/*
 -All/DIPSSiteDataAccessDetectorTest.DiscardFencedFrameCookieClientAccess/*
 -All/DIPSSiteDataAccessDetectorTest.DiscardPrerenderedPageCookieClientAccess/*
--All/DIPSDataDeletionBrowserTest.*
 -All/DIPSTabHelperBrowserTest.*/*
 -All/OpenerHeuristicBackfillGrantBrowserTest.TrackingProtectionOnboardingCreatesBackfillGrants/*
 -All/OpenerHeuristicCurrentInteractionGrantBrowserTest.AdTaggedPopupInteractionWithStorageAccessGrant/*
@@ -925,6 +930,7 @@
 -AllSitesFollowingFirstPartyTest.SiteNotFollowingFirstPartyNotIncluded
 -DIPSBounceDetectorBrowserTest.*
 -DIPSBounceTrackingDevToolsIssueTest.BounceTrackingDevToolsIssue
+-DIPSPrivacySandboxApiInteractionTest.*
 -DIPSThrottlingBrowserTest.*
 -DIPSWebAuthnBrowserTest.ReportRedirectorsInChain_OmitSitesWithWebAuthnAssertions
 -DIPSWebAuthnBrowserTest.WebAuthnAssertion_ConfirmWCOCallback

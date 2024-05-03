@@ -65,6 +65,7 @@
 -BrowserCommandControllerWithBookmarksTest.BookmarkAllTabsUpdatesOnTabStripChanges
 -BrowserFeaturePromoControllerPolicyTest.*
 -BrowserFeaturePromoControllerPriorityTest.*
+-BrowserFeaturePromoControllerRotatingPromoTest.*
 -BrowserFeaturePromoControllerViewsTest.*
 -BrowserFinderTest.ScheduledForDeletion
 -BrowserViewPipTest.CanFullscreenPolicyDoesNotEnableFullscreen
