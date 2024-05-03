@@ -1,5 +1,5 @@
 diff --git a/ios/chrome/browser/flags/about_flags.mm b/ios/chrome/browser/flags/about_flags.mm
-index 9cc8c1dc52b8d46ed1ec8be48034562da3aa9a96..45671f946abad3fa027a95d03a928724ec0c053e 100644
+index 7e4dfc1a9d8560da57c07aa38064b47e88e002f7..0f6610bf4b3c003c06766bfb91278eaaa0f86ae8 100644
 --- a/ios/chrome/browser/flags/about_flags.mm
 +++ b/ios/chrome/browser/flags/about_flags.mm
 @@ -686,6 +686,7 @@ const FeatureEntry::FeatureVariation kModernTabStripVariations[] = {
