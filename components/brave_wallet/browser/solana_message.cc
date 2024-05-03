@@ -782,10 +782,6 @@ bool SolanaMessage::AddPriorityFee(uint32_t compute_units,
   GetUniqueAccountMetas(fee_payer_, instructions_, &unique_account_metas);
   std::vector<SolanaAddress> static_accounts;
   for (const auto& meta : unique_account_metas) {
-    if (meta.address_table_lookup_index) {  // Not legacy.
-      return false;
-    }
-
     auto addr = SolanaAddress::FromBase58(meta.pubkey);
     if (!addr) {
       return false;
