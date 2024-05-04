@@ -1139,18 +1139,32 @@ public class BytecodeTest {
                         FullscreenManager.class,
                         TabObscuringHandler.class,
                         DesktopWindowStateProvider.class));
-        Assert.assertTrue(constructorsMatch(
-                "org/chromium/chrome/browser/toolbar/menu_button/MenuButtonCoordinator",
-                "org/chromium/chrome/browser/toolbar/menu_button/BraveMenuButtonCoordinator",
-                OneshotSupplier.class, BrowserStateBrowserControlsVisibilityDelegate.class,
-                WindowAndroid.class, MenuButtonCoordinator.SetFocusFunction.class, Runnable.class,
-                boolean.class, Supplier.class, ThemeColorProvider.class, Supplier.class,
-                Runnable.class, int.class));
-        Assert.assertTrue(constructorsMatch("org/chromium/chrome/browser/share/ShareDelegateImpl",
-                "org/chromium/chrome/browser/share/BraveShareDelegateImpl",
-                BottomSheetController.class, ActivityLifecycleDispatcher.class, Supplier.class,
-                Supplier.class, Supplier.class, ShareDelegateImpl.ShareSheetDelegate.class,
-                boolean.class));
+        Assert.assertTrue(
+                constructorsMatch(
+                        "org/chromium/chrome/browser/toolbar/menu_button/MenuButtonCoordinator",
+                        "org/chromium/chrome/browser/toolbar/menu_button/BraveMenuButtonCoordinator",
+                        OneshotSupplier.class,
+                        BrowserStateBrowserControlsVisibilityDelegate.class,
+                        WindowAndroid.class,
+                        MenuButtonCoordinator.SetFocusFunction.class,
+                        Runnable.class,
+                        boolean.class,
+                        Supplier.class,
+                        ThemeColorProvider.class,
+                        Supplier.class,
+                        Runnable.class,
+                        int.class));
+        Assert.assertTrue(
+                constructorsMatch(
+                        "org/chromium/chrome/browser/share/ShareDelegateImpl",
+                        "org/chromium/chrome/browser/share/BraveShareDelegateImpl",
+                        BottomSheetController.class,
+                        ActivityLifecycleDispatcher.class,
+                        Supplier.class,
+                        Supplier.class,
+                        Supplier.class,
+                        ShareDelegateImpl.ShareSheetDelegate.class,
+                        boolean.class));
         Assert.assertTrue(
                 constructorsMatch(
                         "org/chromium/chrome/browser/omnibox/suggestions/AutocompleteMediator",
