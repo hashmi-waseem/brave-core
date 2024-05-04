@@ -35,6 +35,9 @@ import {
   AccountsTabState //
 } from '../../../../page/reducers/accounts-tab-reducer'
 
+// hooks
+import { useQuery } from '../../../../common/hooks/use-query'
+
 // style
 import { StyledWrapper } from './style'
 import { Column } from '../../../shared/style'
@@ -110,8 +113,8 @@ export const CryptoView = ({ sessionRoute }: Props) => {
   // routing
   const history = useHistory()
   const location = useLocation()
-  const params = new URLSearchParams(history.location.search)
-  const selectedDappCategory = params.get('dappCategory')
+  const query = useQuery()
+  const selectedDappCategory = query.get('dappCategory')
 
   // methods
   const onShowBackup = React.useCallback(() => {
